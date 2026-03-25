@@ -16,10 +16,8 @@ export default function Home() {
        <div className="relative z-10 ">
           <Hero/>
           
-        
         </div>
      </div>
-      
       
       
       <div className="relative z-20">

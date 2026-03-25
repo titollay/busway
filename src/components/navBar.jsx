@@ -7,7 +7,7 @@ const MotionDiv = motion.div;
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About Us", href: "#about-us" },
+  { label: "About Us", href: "/about" },
   { label: "Services", href: "#services", page: "/suivi-bus" },
   { label: "Testimonials", href: "#testimonial" },
   { label: "Contact", href: "#contact" },
