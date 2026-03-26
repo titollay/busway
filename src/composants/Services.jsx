@@ -39,9 +39,8 @@ function Services() {
   return (
     <div className="min-h-screen bg-gray-100 py-16 px-6">
 
-      {/* Title avec animation fade-in */}
-      <h1 className="text-4xl font-bold text-center text-blue-600 mb-4 
-                     animate-fadeInDown">
+      {/* Title */}
+      <h1 className="text-4xl font-bold text-center text-blue-600 mb-4 animate-fadeInDown">
         Our Services
       </h1>
 
@@ -49,31 +48,33 @@ function Services() {
         Découvrez les fonctionnalités de BusFink pour faciliter vos déplacements.
       </p>
 
-      {/* Services Grid */}
+      {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
 
         {services.map((service, index) => (
           <div
             key={index}
-            className={`bg-white rounded-xl p-8 text-center shadow-md transform transition-all duration-500
-                        hover:-translate-y-4 hover:shadow-2xl
-                        animate-fadeInUp`}
+            className="bg-white rounded-xl p-8 text-center shadow-md 
+                       transform transition-all duration-500
+                       hover:-translate-y-4 hover:shadow-2xl
+                       animate-fadeInUp"
             style={{ animationDelay: `${index * 100}ms` }}
           >
 
-            {/* Icon avec rotation et bounce */}
+            {/* Icon */}
             <div className="text-blue-500 mb-4 flex justify-center
-                            transition-transform duration-500 hover:rotate-12 hover:scale-110">
+                            transition-transform duration-500 
+                            hover:rotate-12 hover:scale-110">
               {service.icon}
             </div>
 
             {/* Title */}
-            <h2 className="text-xl font-semibold mb-3 animate-fadeInUp">
+            <h2 className="text-xl font-semibold mb-3">
               {service.title}
             </h2>
 
-            {/* Description */}
-            <p className="text-gray-600 text-sm animate-fadeInUp delay-150">
+            {/* Desc */}
+            <p className="text-gray-600 text-sm">
               {service.desc}
             </p>
 
@@ -82,38 +83,14 @@ function Services() {
 
       </div>
 
-      {/* Button avec pulse hover */}
+      {/* Button */}
       <div className="flex justify-center mt-16">
         <button className="bg-blue-600 text-white px-10 py-4 rounded-xl text-lg 
-                           shadow-lg transition duration-500 hover:bg-blue-700 
-                           hover:scale-110 hover:animate-pulse">
+                           shadow-lg transition duration-500 
+                           hover:bg-blue-700 hover:scale-110 hover:animate-pulse">
           Explorer la carte
         </button>
       </div>
-
-      {/* Animations keyframes personnalisées */}
-      <style jsx>{`
-        @keyframes fadeInDown {
-          0% { opacity: 0; transform: translateY(-20px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-          0% { opacity: 0; transform: translateY(20px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeInDown {
-          animation: fadeInDown 0.8s ease forwards;
-        }
-        .animate-fadeInUp {
-          animation: fadeInUp 0.8s ease forwards;
-        }
-        .delay-150 {
-          animation-delay: 150ms;
-        }
-        .delay-200 {
-          animation-delay: 200ms;
-        }
-      `}</style>
 
     </div>
   );

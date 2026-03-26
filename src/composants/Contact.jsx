@@ -3,63 +3,45 @@ import { FaMapMarkerAlt, FaEnvelope, FaPhone, FaFacebook, FaTwitter } from "reac
 
 const Contact = () => {
   return (
-    <div
-      className="contact-container"
-      style={{
-        padding: "3rem",
-        textAlign: "center",
-        fontFamily: "Arial, sans-serif",
-        background: "#f8f9fa",
-        minHeight: "100vh",
-      }}
-    >
-      <h1 style={{ color: "#007bff", marginBottom: "1rem" }}>Contactez-nous</h1>
-      <p style={{ fontSize: "1.1rem", marginBottom: "2rem" }}>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-10 text-center font-sans">
+      
+      <h1 className="text-3xl font-bold text-blue-600 mb-4">
+        Contactez-nous
+      </h1>
+
+      <p className="text-lg mb-8">
         Pour toute question ou information sur <strong>BusFink</strong>, vous pouvez nous contacter via :
       </p>
 
-      <div
-        className="contact-info"
-        style={{
-          display: "inline-block",
-          textAlign: "left",
-          background: "#fff",
-          padding: "2rem",
-          borderRadius: "10px",
-          boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-          animation: "fadeIn 1s ease-in-out",
-          minWidth: "300px",
-        }}
-      >
-        <p style={{ marginBottom: "1rem", display: "flex", alignItems: "center" }}>
-          <FaMapMarkerAlt style={{ marginRight: "0.8rem", color: "#007bff" }} />
-          <strong>Adresse :</strong> 123 Rue des Bus, Oujda, Maroc
+      <div className="bg-white p-8 rounded-xl shadow-lg animate-fadeIn min-w-[300px] text-left">
+        
+        <p className="flex items-center mb-4">
+          <FaMapMarkerAlt className="mr-3 text-blue-600" />
+          <strong>Adresse :</strong>&nbsp; 123 Rue des Bus, Oujda, Maroc
         </p>
-        <p style={{ marginBottom: "1rem", display: "flex", alignItems: "center" }}>
-          <FaEnvelope style={{ marginRight: "0.8rem", color: "#007bff" }} />
-          <strong>Email :</strong> contact@busfink.com
+
+        <p className="flex items-center mb-4">
+          <FaEnvelope className="mr-3 text-blue-600" />
+          <strong>Email :</strong>&nbsp; contact@busfink.com
         </p>
-        <p style={{ marginBottom: "1rem", display: "flex", alignItems: "center" }}>
-          <FaPhone style={{ marginRight: "0.8rem", color: "#007bff" }} />
-          <strong>Téléphone :</strong> +212 7 28 57 97
+
+        <p className="flex items-center mb-4">
+          <FaPhone className="mr-3 text-blue-600" />
+          <strong>Téléphone :</strong>&nbsp; +212 7 28 57 97
         </p>
-        <p style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+
+        <p className="flex items-center gap-4">
           <strong>Suivez-nous :</strong>
-          <a href="#" style={{ color: "#007bff", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+
+          <a href="#" className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition">
             <FaFacebook /> Facebook
           </a>
-          <a href="#" style={{ color: "#007bff", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+
+          <a href="#" className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition">
             <FaTwitter /> Twitter
           </a>
         </p>
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          0% {opacity: 0; transform: translateY(20px);}
-          100% {opacity: 1; transform: translateY(0);}
-        }
-      `}</style>
     </div>
   );
 };
