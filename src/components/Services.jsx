@@ -13,7 +13,7 @@ function Services() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#07041B] py-16 px-6 text-white">
+    <div className="min-h-screen bg-[#070320] py-16 px-6 text-white">
 
       {/* Title */}
       <h1 className="text-4xl font-bold text-center text-blue-400 mb-4 animate-fadeInDown">

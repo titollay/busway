@@ -2,6 +2,11 @@ import NavBar from "./components/navBar";
 import Hero from "./components/heroSection";
 import wallpaper from "./assets/wall.webp";
 import Parallax1 from "./parallax/parallax1";
+import About from "./components/About1";
+import Services from "./components/Services";
+import Contact from "./components/Contact";
+import Footer from "./components/Footer";
+
 
 export default function Home() {
   return (
@@ -18,13 +23,23 @@ export default function Home() {
           
         </div>
      </div>
-      
+      <div>
+          <About/>
+      </div>
       
       <div className="relative z-20">
         
         <Parallax1 sectionName={"Nos Services"} />
       </div>
-
+     <div>
+      <Services/>
+     </div>
+     <div>
+        <Contact/>
+     </div>
+     <div>
+        <Footer />
+     </div>
      
       
     </main>

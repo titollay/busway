@@ -1,6 +1,6 @@
 import React from "react";
-import bus from "./assets/bus.jpg";
-import bus2 from "./assets/bus2.jpg";
+import bus from "../assets/bus.jpg";
+import bus2 from "../assets/bus2.jpg";
 
 export default function About() {
   return (

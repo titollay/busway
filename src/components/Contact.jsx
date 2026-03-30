@@ -7,7 +7,7 @@ const Contact = () => {
     <div className="relative min-h-[120vh] flex items-start justify-center pt-32 pb-20 px-6 font-sans overflow-hidden bg-[#07041B]">
       
       {/* Background غامق */}
-      <div className="absolute inset-0 bg-[#07041B]"></div>
+      <div className="absolute inset-0 bg-[#070320]"></div>
 
       <div className="relative z-10 w-full max-w-3xl text-center animate-fadeIn">
         
