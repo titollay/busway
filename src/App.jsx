@@ -6,6 +6,7 @@ import Home from "./Home";
 
 import Contact from "./components/Contact";
 import Services from "./components/Services";
+import Login from "./components/Login";
 
 
 
@@ -18,7 +19,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services/>} />
         <Route path="/contact" element={<Contact/>} />
-
+        <Route path="/login" element={<Login />} />
       </Routes>
      
       
