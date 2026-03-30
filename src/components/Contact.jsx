@@ -20,7 +20,7 @@ const Contact = () => {
         </p>
 
         {/* Glass Contact Card frosty */}
-        <div className="bg-white/10 backdrop-blur-[30px] border border-white/20 shadow-2xl p-12 rounded-2xl text-left animate-popUp hover:scale-105 hover:shadow-blue-400 transition duration-500">
+        <div className="bg-[#0d0a2e] backdrop-blur-[30px] border border-white/20 shadow-2xl p-12 rounded-2xl text-left animate-popUp hover:scale-105 hover:shadow-blue-400 transition duration-500">
           
           <p className="flex items-center mb-6 text-white font-semibold">
             <FaMapMarkerAlt className="mr-3 text-blue-400" />
