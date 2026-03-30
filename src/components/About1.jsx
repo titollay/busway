@@ -4,14 +4,14 @@ import bus2 from "../assets/bus2.jpg";
 
 export default function About() {
   return (
-    <div className="bg-[#070320] text-white overflow-hidden">
+    <div className="bg-[#070320] text-white overflow-hidden animate-fade-in">
 
       {/* ── SECTION 1 : ABOUT US ── */}
       <section className="max-w-6xl mx-auto px-6 py-24">
         <div className="flex flex-col md:flex-row items-center gap-16">
 
           {/* LEFT — Texte avec animations */}
-          <div className="flex-1 space-y-6 animate-fade-in-up ml-2">
+          <div className="flex-1 space-y-6 ml-2 animate-fade-in-delay">
             <p className="text-blue-400 text-xs uppercase tracking-widest font-medium mb-4 animate-pulse">
               ABOUT US
             </p>
@@ -47,7 +47,7 @@ export default function About() {
 
           {/* RIGHT — Photos superposées avec effets */}
           <div
-            className="flex-1 relative w-full group"
+            className="flex-1 relative w-full group animate-fade-in-delay-2"
             style={{ minHeight: 360, height: 400 }}
           >
             {/* Cadre décoratif derrière avec animation */}
@@ -66,7 +66,6 @@ export default function About() {
                 alt="Bus en ville"
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
               />
-              {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-tb from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
             </div>
 
@@ -80,13 +79,12 @@ export default function About() {
                 alt="Intérieur bus"
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
               />
-              {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-tb from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
             </div>
 
             {/* Élément décoratif flottant */}
-            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl animate-pulse" />
-            <div className="absolute -top-4 -left-4 w-16 h-16 bg-purple-500/10 rounded-full blur-xl animate-pulse delay-700" />
+            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl animate-fade-in-delay" />
+            <div className="absolute -top-4 -left-4 w-16 h-16 bg-purple-500/10 rounded-full blur-xl animate-fade-in-delay-2" />
 
           </div>
 
@@ -95,18 +93,32 @@ export default function About() {
 
       {/* Animation keyframes personnalisés */}
       <style jsx>{`
-        @keyframes fade-in-up {
+        @keyframes fade-in {
           0% {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
           }
           100% {
             opacity: 1;
             transform: translateY(0);
           }
         }
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s ease-out forwards;
+
+        .animate-fade-in {
+          opacity: 0;
+          animation: fade-in 1s ease-out forwards;
+        }
+
+        .animate-fade-in-delay {
+          opacity: 0;
+          animation: fade-in 1s ease-out forwards;
+          animation-delay: 0.3s;
+        }
+
+        .animate-fade-in-delay-2 {
+          opacity: 0;
+          animation: fade-in 1s ease-out forwards;
+          animation-delay: 0.6s;
         }
       `}</style>
 

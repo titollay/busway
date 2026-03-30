@@ -9,7 +9,6 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Services", href: "#services", page: "/suivi-bus" },
-  { label: "About Us", href: "" },
   { label: "Services", href: "/services", page: "/suivi-bus" },
   { label: "Testimonials", href: "#testimonial" },
   { label: "Contact", href: "/contact" },
