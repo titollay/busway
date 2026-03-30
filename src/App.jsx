@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Footer from "./Footer";
 import About from "./About1";
+import Home from "./Home";
 
 import Contact from "./compsants/Contact";
 import Services from "./compsants/Services";
