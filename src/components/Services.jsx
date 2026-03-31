@@ -1,5 +1,6 @@
+
+import React, { useRef, useEffect, useState } from "react";
 import { FaBus, FaClock, FaMapMarkerAlt, FaBell, FaMap, FaRoute } from "react-icons/fa";
-import React from "react";
 
 function Services() {
   const services = [
@@ -13,49 +14,17 @@ function Services() {
 
   return (
     <div className="min-h-screen bg-[#070320] py-16 px-6 text-white">
-
-      {/* Title */}
-      <h1 className="text-4xl font-bold text-center text-blue-400 mb-4">
-        Nos Services
-      </h1>
-
+      <h1 className="text-4xl font-bold text-center text-blue-400 mb-4">Nos Services</h1>
       <p className="text-center text-gray-300 mb-14">
         Découvrez les fonctionnalités de <strong>BusWay</strong> pour faciliter vos déplacements.
       </p>
 
-      {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
         {services.map((service, index) => (
-          <div
-            key={index}
-            className="bg-[#0d0a2e] border border-blue-900/40 rounded-xl p-8 text-center
-                       transform transition-all duration-500
-                       hover:-translate-y-4 hover:border-blue-500/60
-                       animate-dropTop"
-            style={{
-              animationDelay: `${index * 150}ms`,
-              boxShadow: "0 4px 20px rgba(0,0,0,0.4)"
-            }}
-          >
-            {/* Icon */}
-            <div
-              className={`mb-4 flex justify-center items-center w-16 h-16 mx-auto rounded-full ${service.color}
-                          transition-transform duration-500 hover:scale-125`}
-              style={{ boxShadow: `0 4px 20px ${service.shadow}` }}
-            >
-              {React.cloneElement(service.icon, { color: "white" })}
-            </div>
-
-            {/* Title */}
-            <h2 className="text-xl font-semibold mb-3 text-white">{service.title}</h2>
-
-            {/* Description */}
-            <p className="text-gray-400 text-sm">{service.desc}</p>
-          </div>
+          <AnimatedCard key={index} service={service} index={index} />
         ))}
       </div>
 
-      {/* Button */}
       <div className="flex justify-center mt-16">
         <button className="bg-blue-600 text-white px-10 py-4 rounded-xl text-lg
                            shadow-lg transition duration-500
@@ -64,7 +33,6 @@ function Services() {
         </button>
       </div>
 
-      {/* ✅ style sans jsx */}
       <style>{`
         @keyframes dropTop {
           0% { opacity: 0; transform: translateY(-80px); }
@@ -76,7 +44,53 @@ function Services() {
           animation: dropTop 0.8s ease forwards;
         }
       `}</style>
+    </div>
+  );
+}
 
+function AnimatedCard({ service, index }) {
+  const ref = useRef();
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          // observer.unobserve(ref.current); 
+        } else {
+          setVisible(false); 
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => { if (ref.current) observer.unobserve(ref.current); };
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`bg-[#0d0a2e] border border-blue-900/40 rounded-xl p-8 text-center
+                 transform transition-all duration-500
+                 hover:-translate-y-4 hover:border-blue-500/60
+                 ${visible ? "animate-dropTop" : ""}`}
+      style={{
+        animationDelay: `${index * 150}ms`,
+        boxShadow: "0 4px 20px rgba(0,0,0,0.4)"
+      }}
+    >
+      <div
+        className={`mb-4 flex justify-center items-center w-16 h-16 mx-auto rounded-full ${service.color}
+                    transition-transform duration-500 hover:scale-125`}
+        style={{ boxShadow: `0 4px 20px ${service.shadow}` }}
+      >
+        {React.cloneElement(service.icon, { color: "white" })}
+      </div>
+
+      <h2 className="text-xl font-semibold mb-3 text-white">{service.title}</h2>
+      <p className="text-gray-400 text-sm">{service.desc}</p>
     </div>
   );
 }
