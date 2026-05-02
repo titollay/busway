@@ -1,18 +1,16 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
- import heroimg from "../assets/hero4.png";
 
-import img1 from "../assets/team/1.webp";
-import img12 from "../assets/team/12.webp";
-import img13 from "../assets/team/13.webp";
-import img14 from "../assets/team/14.webp";
-import img15 from "../assets/team/15.webp";
-import img16 from "../assets/team/16.webp";
-import img18 from "../assets/team/18.webp";
-import img19 from "../assets/team/19.webp";
-
-// import bg2 from "../assets/bg/Rectangle 4.png";
-import Button from "../commont/btnScroll";
+import heroimg from "../../assets/hero4.png";
+import img1 from "../../assets/team/1.webp";
+import img12 from "../../assets/team/12.webp";
+import img13 from "../../assets/team/13.webp";
+import img14 from "../../assets/team/14.webp";
+import img15 from "../../assets/team/15.webp";
+import img16 from "../../assets/team/16.webp";
+import img18 from "../../assets/team/18.webp";
+import img19 from "../../assets/team/19.webp";
+import Button from "../common/btnScroll";
 
 const teamImages = [img1, img12, img13, img14, img15, img16, img19, img18];
 
