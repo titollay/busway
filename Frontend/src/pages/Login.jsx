@@ -78,9 +78,10 @@ export default function Login() {
 
             {/* Forgot password */}
             <div className="text-right">
-                <a href="#" className="text-xs text-blue-400 hover:text-blue-300 transition">
+                {/* <a href="#" className="text-xs text-blue-400 hover:text-blue-300 transition">
                 Mot de passe oublié ?
-                </a>
+                </a> */}
+                <a href="/forgot-password" className="text-xs text-blue-400">   Mot de passe oublié ?</a>
             </div>
 
             {/* Submit */}
