@@ -6,7 +6,7 @@ return [
             id_position INT AUTO_INCREMENT PRIMARY KEY,
             latitude DECIMAL(9,6) NULL,
             longitude DECIMAL(9,6) NULL,
-            horodatage DATETIME NULL,
+            horodatage DATETIME DEFAULT CURRENT_TIMESTAMP,
             date_position DATE NOT NULL DEFAULT (CURRENT_DATE),
             id_bus INT NULL,
 

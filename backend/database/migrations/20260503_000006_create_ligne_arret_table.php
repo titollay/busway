@@ -1,3 +1,5 @@
+
+
 <?php
 
 return [
@@ -9,6 +11,8 @@ return [
             date_ajout DATETIME DEFAULT CURRENT_TIMESTAMP,
 
             PRIMARY KEY (id_ligne, id_arret),
+
+            UNIQUE (id_ligne, ordre),
 
             INDEX (id_ligne),
             INDEX (id_arret),

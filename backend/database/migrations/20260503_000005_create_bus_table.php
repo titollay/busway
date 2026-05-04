@@ -1,3 +1,4 @@
+
 <?php
 
 return [
@@ -18,6 +19,11 @@ return [
             FOREIGN KEY (id_ligne)
                 REFERENCES ligne(id_ligne)
                 ON DELETE SET NULL
+                ON UPDATE CASCADE,
+
+            FOREIGN KEY (matricule)
+                REFERENCES conducteur(matricule)
+                ON DELETE SET NULL
                 ON UPDATE CASCADE
         );
     ",
@@ -26,3 +32,16 @@ return [
         DROP TABLE IF EXISTS bus;
     "
 ];
+
+
+
+
+
+
+
+
+
+
+
+
+

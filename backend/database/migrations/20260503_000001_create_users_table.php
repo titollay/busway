@@ -1,8 +1,9 @@
+
 <?php
 
 return [
     'up' => "
-        CREATE TABLE user (
+        CREATE TABLE users (
             id_user INT AUTO_INCREMENT PRIMARY KEY,
             nom VARCHAR(50) NULL,
             email VARCHAR(50) NOT NULL UNIQUE,
@@ -14,6 +15,6 @@ return [
     ",
 
     'down' => "
-        DROP TABLE IF EXISTS user;
+        DROP TABLE IF EXISTS users;
     "
 ];
