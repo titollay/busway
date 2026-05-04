@@ -2,10 +2,10 @@
 // backend/config/cors.php
 
 function setCorsHeaders(): void {
-    header("Access-Control-Allow-Origin: http://localhost:5173");
+    $allowedOrigin = $_ENV['FRONTEND_URL'] ?? 'http://localhost:5173';
+    header("Access-Control-Allow-Origin: $allowedOrigin");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization");
-    header("Access-Control-Allow-Credentials: true");
     header("Content-Type: application/json; charset=UTF-8");
 
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -14,13 +14,13 @@ function setCorsHeaders(): void {
     }
 }
 
-function jsonResponse(mixed $data, int $status = 200): void {
+function jsonResponse(mixed $data, int $status = 200): never {
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
-function jsonError(string $message, int $status = 400): void {
+function jsonError(string $message, int $status = 400): never {
     jsonResponse(['error' => $message], $status);
 }
 
