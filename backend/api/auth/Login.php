@@ -33,13 +33,21 @@ $user = $stmt->fetch();
 if (!$user || !password_verify($password, $user['password'])) {
     jsonError("Email ou mot de passe incorrect", 401);
 }
+    
+// ✅ Fix — fetch matricule if conductor, then include it
+$matricule = null;
+if ($user['role'] === 'conducteur') {
+    $stmt2 = $pdo->prepare("SELECT matricule FROM conducteur WHERE id_user = ?");
+    $stmt2->execute([$user['id_user']]);
+    $row = $stmt2->fetch();
+    $matricule = $row ? (int)$row['matricule'] : null;
+}
 
-// ✅ Token فيه matricule
 $token = generateToken([
-    'id_user' => $user['id_user'],
-    'email' => $user['email'],
-    'role' => $user['role'],
-    'matricule' => $user['matricule'] ?? null
+    'id_user'   => $user['id_user'],
+    'email'     => $user['email'],
+    'role'      => $user['role'],
+    'matricule' => $matricule,
 ]);
 
 jsonResponse([
