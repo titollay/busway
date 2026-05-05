@@ -4,43 +4,70 @@ require_once __DIR__ . '/../../config/db.php';
 require_once __DIR__ . '/../../config/auth.php';
 
 setCorsHeaders();
-requireRole('conducteur', 'admin');
 
-$body = getJsonBody();
+// 🔐 auth
+$payload = requireAuth();
 
-$id_bus = (int) ($body['id_bus'] ?? 0);
-$lat    = (float) ($body['latitude'] ?? 0);
-$lng    = (float) ($body['longitude'] ?? 0);
-
-if (!$id_bus || !$lat || !$lng) {
-    jsonError("Paramètres invalides");
+if ($payload['role'] !== 'conducteur') {
+    jsonError("Accès refusé", 403);
 }
 
 $pdo = getDB();
 
-// vérifier bus
-$stmt = $pdo->prepare("SELECT id_bus, matricule FROM bus WHERE id_bus = ? AND en_service = 1");
-$stmt->execute([$id_bus]);
-$bus = $stmt->fetch();
+// 🔍 check GPS status
+$stmt = $pdo->prepare("
+    SELECT gps_active 
+    FROM conducteur 
+    WHERE id_user = ?
+");
 
-if (!$bus) {
-    jsonError("Bus introuvable", 404);
+$stmt->execute([$payload['id_user']]);
+$driver = $stmt->fetch();
+
+// 🚫 if GPS OFF
+if (!$driver || (int)$driver['gps_active'] === 0) {
+    jsonError("GPS est désactivé", 403);
 }
 
-// vérifier conducteur
-$payload = requireAuth();
+// 📍 read position data
+$body = getJsonBody();
 
-if ($payload['role'] === 'conducteur') {
-    if ($bus['matricule'] != $payload['matricule']) {
-        jsonError("Accès refusé", 403);
-    }
+$lat = $body['latitude'] ?? null;
+$lng = $body['longitude'] ?? null;
+
+// validation (optional but recommended)
+if ($lat === null || $lng === null) {
+    jsonError("Coordonnées manquantes");
 }
 
-// insert position
+if (!is_numeric($lat) || !is_numeric($lng)) {
+    jsonError("Coordonnées invalides");
+}
+
+$lat = (float)$lat;
+$lng = (float)$lng;
+
+// 🌍 GPS range validation
+if ($lat < -90 || $lat > 90) {
+    jsonError("Latitude invalide");
+}
+
+if ($lng < -180 || $lng > 180) {
+    jsonError("Longitude invalide");
+}
+
+// 💾 insert position
 $stmt = $pdo->prepare("
     INSERT INTO bus_position (latitude, longitude, horodatage, id_bus)
-    VALUES (?, ?, NOW(), ?)
+    VALUES (?, ?, NOW(), (
+        SELECT id_bus FROM bus WHERE matricule = ?
+    ))
 ");
-$stmt->execute([$lat, $lng, $id_bus]);
 
-jsonResponse(['message' => 'Position enregistrée']);
+$stmt->execute([
+    $lat,
+    $lng,
+    $payload['matricule']
+]);
+
+jsonResponse("Position enregistrée avec succès");
