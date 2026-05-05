@@ -1,14 +1,10 @@
 <?php
-// backend/config/auth.php
+require_once __DIR__ . '/cors.php';
 
-$jwtSecret = $_ENV['JWT_SECRET'] ?? null;
-if (!$jwtSecret) {
-    http_response_code(500);
-    echo json_encode(['error' => 'JWT_SECRET manquant dans les variables d\'environnement']);
-    exit;
-}
+$jwtSecret = $_ENV['JWT_SECRET'] ?? 'my_super_secret_key_123';
+
 define('JWT_SECRET', $jwtSecret);
-define('JWT_EXPIRY', 60 * 60 * 24 * 7); // 7 jours
+define('JWT_EXPIRY', 60 * 60 * 24 * 7);
 
 function generateToken(array $payload): string {
     $header  = base64url_encode(json_encode(['alg' => 'HS256', 'typ' => 'JWT']));
