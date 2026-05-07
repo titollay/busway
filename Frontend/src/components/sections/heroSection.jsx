@@ -1,7 +1,13 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/effect-fade";
+import { Autoplay, EffectFade } from "swiper/modules";
 
-import heroimg from "../../assets/hero4.png";
+import hero4 from "../../assets/hero4.png";
+import hero41 from "../../assets/hero41.png";
+import hero45 from "../../assets/hero45.png";
 import img1 from "../../assets/team/1.webp";
 import img12 from "../../assets/team/12.webp";
 import img13 from "../../assets/team/13.webp";
@@ -10,6 +16,7 @@ import img15 from "../../assets/team/15.webp";
 import img16 from "../../assets/team/16.webp";
 import img18 from "../../assets/team/18.webp";
 import img19 from "../../assets/team/19.webp";
+
 import Button from "../common/btnScroll";
 
 const teamImages = [img1, img12, img13, img14, img15, img16, img19, img18];
@@ -316,11 +323,26 @@ export default function Hero() {
               }}
             />
 
-            <img
-              src={heroimg}
-              alt="Hero"
-              className="relative w-full max-w-xs sm:max-w-sm lg:max-w-full h-auto object-contain drop-shadow-2xl"
-            />
+            <div className="w-full relative">
+              <Swiper
+                modules={[Autoplay, EffectFade]}
+                effect="fade"
+                autoplay={{ delay: 2500, disableOnInteraction: false }}
+                loop={true}
+                allowTouchMove={false}
+                className="w-full"
+              >
+                {[hero4, hero41, hero45].map((imgSrc, idx) => (
+                  <SwiperSlide key={idx}>
+                    <img
+                      src={imgSrc}
+                      alt={`Hero Bus ${idx}`}
+                      className="relative w-full max-w-xs sm:max-w-sm lg:max-w-full h-auto object-contain drop-shadow-2xl mx-auto"
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
           </motion.div>
         </div>
         <div className="flex justify-center items-center ">

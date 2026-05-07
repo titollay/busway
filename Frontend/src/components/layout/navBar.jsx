@@ -82,12 +82,15 @@ export default function NavBar({ className = "" }) {
     >
       <div className="flex justify-around items-center px-6 sm:px-10 xl:px-14 xl:py-0 py-2">
         {/* Logo */}
-        <a href="#">
+        <a href="#" className="flex items-center">
           <img
             src={logo}
-            className="w-26 sm:w-28 xl:w-32 2xl:w-36 h-auto object-contain"
+            className="w-14 sm:w-16 xl:w-18 2xl:w-20 h-auto object-contain"
             alt="busway Logo"
           />
+<span className="text-lg font-bold bg-gradient-to-r from-white via-blue-200 to-blue-500 bg-clip-text text-transparent">
+  Busway
+</span>
         </a>
 
         <nav className="hidden lg:block">
