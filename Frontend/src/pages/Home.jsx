@@ -4,6 +4,7 @@ import Services from "../components/sections/Services";
 import Contact from "../components/sections/Contact";
 import Parallax1 from "../parallax/parallax1";
 import wallpaper from "../assets/wall.webp";
+import Testimonials from "../components/sections/Testimonials";
 
 export default function Home() {
   return (
@@ -23,6 +24,7 @@ export default function Home() {
       </div>
 
       <Services />
+      <Testimonials />
       <Contact />
 
     </main>
