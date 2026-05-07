@@ -1,3 +1,4 @@
+import React from "react";
 import Hero from "../components/sections/heroSection";
 import About from "../components/sections/About1";
 import Services from "../components/sections/Services";

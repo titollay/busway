@@ -92,7 +92,7 @@ export default function About() {
       </section>
 
       {/* Animation keyframes personnalisés */}
-      <style jsx>{`
+      <style>{`
         @keyframes fade-in {
           0% {
             opacity: 0;

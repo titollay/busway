@@ -1,5 +1,5 @@
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
 
 
 export default function Parallax1({ sectionName }) {
@@ -41,7 +41,7 @@ export default function Parallax1({ sectionName }) {
   );
 
   return (
-    <div className="min-h-[100vh] bg-[#070320] flex items-center justify-center relative py-[3rem] pb-[5rem]">
+    <div className="min-h-screen bg-[#070320] flex items-center justify-center relative py-12 pb-20">
       <motion.div
         style={{ opacity: modelOpacity }}
         className="pointer-events-none"
@@ -50,7 +50,7 @@ export default function Parallax1({ sectionName }) {
       </motion.div>
       <motion.div
         ref={ref}
-        className="flex h-[250vh] font-[600] items-center justify-center"
+        className="flex h-[250vh] font-semibold items-center justify-center"
       >
         <motion.h1
           style={{
@@ -59,7 +59,7 @@ export default function Parallax1({ sectionName }) {
             scale: textScale,
             backgroundPosition: textFill,
           }}
-          className="fillText sticky top-[40%]  text-[6rem] whitespace-nowrap text-center max-sm:text-[3rem] font-[800]"
+          className="fillText sticky top-[40%]  text-[6rem] whitespace-nowrap text-center max-sm:text-[3rem] font-extrabold"
         >
           {sectionName}
         </motion.h1>

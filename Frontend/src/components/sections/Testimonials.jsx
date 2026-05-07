@@ -1,3 +1,4 @@
+import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "../../styles/index.css";
@@ -5,12 +6,12 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 
-import img1 from "../assets/team/1.webp";
-import img12 from "../assets/team/12.webp";
-import img19 from "../assets/team/19.webp";
-import img13 from "../assets/team/13.webp";
-import img14 from "../assets/team/14.webp";
-import img15 from "../assets/team/15.webp";
+import img1 from "../../assets/team/1.webp";
+import img12 from "../../assets/team/12.webp";
+import img19 from "../../assets/team/19.webp";
+import img13 from "../../assets/team/13.webp";
+import img14 from "../../assets/team/14.webp";
+import img15 from "../../assets/team/15.webp";
 
 // ─── Data ───────────────────────────────────────────────────────────────────
 
