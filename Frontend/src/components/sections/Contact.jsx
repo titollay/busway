@@ -1,10 +1,6 @@
-<<<<<<< HEAD:Frontend/src/components/sections/Contact.jsx
-import React from "react";
-import { FaMapMarkerAlt, FaEnvelope, FaPhone, FaFacebook, FaTwitter } from "react-icons/fa";
-=======
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import img1 from "../assets/bus2.jpg";
+import img1 from "../../assets/bus2.jpg";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 40 },
@@ -126,7 +122,6 @@ export default function Contact() {
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 3000);
   };
->>>>>>> a8c03a1 (update login and testimonials):src/components/Contact.jsx
 
   return (
     <>
