@@ -1,16 +1,27 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "DM Sans", "Inter", ui-sans-serif, system-ui;
+  --font-display: "Playfair Display", "Cormorant Garamond", serif;
+  
+  --color-brand-dark: #07041B;
+  --color-brand-blue: #3B82F6;
+}
+
 :root {
-  --bg-dark: #07041B; /* Deep slate background */
+  --bg-dark: #07041B;
   --bg-darker: #04020f;
 }
 
+* {
+  font-family: var(--font-sans);
+}
 
-
-
-
-
-
+body {
+  background-color: var(--bg-dark);
+  color: white;
+  overflow-x: clip;
+}
 
 /* Custom Scrollbar - Scrollbars are inherently pseudo-elements and usually kept in CSS */
 ::-webkit-scrollbar {
@@ -42,12 +53,6 @@
   background-clip: text;
 }
 
-* {
-  font-family: "DM Sans", sans-serif;
-}
-body {
-  overflow-x: clip;
-}
 .override-overflow {
   overflow-x: visible !important; /* بدون clip */
 }

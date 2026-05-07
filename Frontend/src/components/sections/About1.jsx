@@ -91,36 +91,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Animation keyframes personnalisés */}
-      <style>{`
-        @keyframes fade-in {
-          0% {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
 
-        .animate-fade-in {
-          opacity: 0;
-          animation: fade-in 1s ease-out forwards;
-        }
-
-        .animate-fade-in-delay {
-          opacity: 0;
-          animation: fade-in 1s ease-out forwards;
-          animation-delay: 0.3s;
-        }
-
-        .animate-fade-in-delay-2 {
-          opacity: 0;
-          animation: fade-in 1s ease-out forwards;
-          animation-delay: 0.6s;
-        }
-      `}</style>
 
     </div>
   );
