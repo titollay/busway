@@ -20,12 +20,12 @@ function Dropdown({ trigger, children }) {
 }
 
 const NOTIFICATIONS = [
-  { icon: "fa-solid fa-truck", text: "Delivery processing", time: "6 hr" },
-  { icon: "fa-solid fa-cart-shopping", text: "Order Complete", time: "3 hr" },
-  { icon: "fa-solid fa-file-lines", text: "Tickets Generated", time: "1 hr" },
+  { icon: "fa-solid fa-bus-filled", text: "Bus #12: Maintenance Due", time: "2 hr" },
+  { icon: "fa-solid fa-user-check", text: "New Driver Verified", time: "3 hr" },
+  { icon: "fa-solid fa-triangle-exclamation", text: "Delay on Route B", time: "1 hr" },
   {
-    icon: "fa-solid fa-paper-plane",
-    text: "Delivery Complete",
+    icon: "fa-solid fa-route",
+    text: "Route A path updated",
     time: "45 min",
   },
 ];
@@ -68,14 +68,14 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
     }
   };
 
-  const iconBtn = `flex items-center justify-center w-9 h-9 rounded-lg hover:text-orange-400 transition-all duration-200 cursor-pointer ${
+  const iconBtn = `flex items-center justify-center w-9 h-9 rounded-lg hover:text-blue-400 transition-all duration-200 cursor-pointer ${
     darkMode
       ? "text-gray-400 hover:bg-white/5"
       : "text-gray-500 hover:bg-black/5"
   }`;
-  const dropMenu = `absolute right-0 top-full mt-2 shadow-xl z-50 overflow-hidden ${
+  const dropMenu = `absolute right-0 top-full mt-2 shadow-xl z-50 overflow-hidden rounded-xl ${
     darkMode
-      ? "bg-[#111] border border-white/8"
+      ? "bg-gray-900/90 border border-white/10 backdrop-blur-xl"
       : "bg-white border border-black/10"
   }`;
   const dropHdr = `flex items-center gap-3 px-4 py-3 ${
@@ -89,20 +89,21 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
 
   return (
     <header
-      className="h-17.5 flex items-center justify-between px-5 gap-4 flex-shrink-0 z-40 relative w-full transition-colors duration-300"
+      className="h-17.5 flex items-center justify-between px-5 gap-4 shrink-0 z-40 relative w-full transition-all duration-300"
       style={{
         fontFamily: "'DM Sans',sans-serif",
-        background: darkMode ? "#0a0a0a" : "#ffffff",
+        background: darkMode ? "rgba(17, 24, 39, 0.65)" : "#ffffff",
+        backdropFilter: darkMode ? "blur(12px)" : "none",
         borderBottom: darkMode
-          ? "1px solid rgba(255,255,255,0.07)"
-          : "1px solid rgba(0,0,0,0.1)",
+          ? "1px solid rgba(255,255,255,0.05)"
+          : "1px solid rgba(0,0,0,0.05)",
       }}
     >
       {/* LEFT */}
-      <div className="flex items-center gap-3 flex-shrink-0">
+      <div className="flex items-center gap-3 shrink-0">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className={`w-9 h-9 flex items-center justify-center rounded-lg hover:text-orange-400 transition-all duration-200 cursor-pointer ${
+          className={`w-9 h-9 flex items-center justify-center rounded-lg hover:text-blue-400 transition-all duration-200 cursor-pointer ${
             darkMode ? "text-gray-400 hover:bg-white/5" : "text-gray-500 hover:bg-black/5"
           }`}
           title="Toggle Sidebar"
@@ -127,7 +128,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
         }`}
       >
         <i
-          className={`fa-solid fa-magnifying-glass text-xs flex-shrink-0 ${
+          className={`fa-solid fa-magnifying-glass text-xs shrink-0 ${
             darkMode ? "text-white/25" : "text-black/25"
           }`}
         ></i>
@@ -144,7 +145,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
       </div>
 
       {/* RIGHT: Icons */}
-      <div className="flex items-center gap-1 flex-shrink-0">
+      <div className="flex items-center gap-1 shrink-0">
         {/* Home */}
         <button className={iconBtn} onClick={() => navigate("/")} title="Go to Website">
           <i className="fa-solid fa-house text-sm"></i>
@@ -155,7 +156,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
           <i className="fa-solid fa-magnifying-glass text-sm"></i>
         </button>
 
-        {/* ✅ Dark mode — يعمل */}
+        {/* Dark mode */}
         <button
           onClick={handleColor}
           className={iconBtn}
@@ -164,7 +165,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
           <i
             className={`text-sm ${
               darkMode
-                ? "fa-solid fa-sun text-orange-400"
+                ? "fa-solid fa-sun text-blue-400"
                 : "fa-regular fa-moon"
             }`}
           ></i>
@@ -175,13 +176,13 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
           trigger={
             <div className={`${iconBtn} relative`}>
               <i className="fa-regular fa-bell text-sm"></i>
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-orange-500 rounded-full border border-white"></span>
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-blue-500 rounded-full border border-white"></span>
             </div>
           }
         >
           <div className={dropMenu} style={{ minWidth: 300 }}>
             <div className={dropHdr}>
-              <i className="fa-regular fa-bell text-orange-400 text-sm"></i>
+              <i className="fa-regular fa-bell text-blue-400 text-sm"></i>
               <h6
                 className={`text-sm font-medium ${
                   darkMode ? "text-white/80" : "text-black/80"
@@ -192,8 +193,8 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
             </div>
             {NOTIFICATIONS.map((n, i) => (
               <div key={i} className={dropItem}>
-                <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
-                  <i className={`${n.icon} text-orange-400 text-xs`}></i>
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                  <i className={`${n.icon} text-blue-400 text-xs`}></i>
                 </div>
                 <p
                   className={`flex-1 text-xs ${
@@ -203,7 +204,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
                   {n.text}
                 </p>
                 <span
-                  className={`text-[0.6rem] flex-shrink-0 ${
+                  className={`text-[0.6rem] shrink-0 ${
                     darkMode ? "text-white/25" : "text-black/25"
                   }`}
                 >
@@ -212,7 +213,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
               </div>
             ))}
             <div className="px-4 py-3 ">
-              <button className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs uppercase tracking-widest transition-colors">
+              <button className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs uppercase tracking-widest transition-colors">
                 Check all notifications
               </button>
             </div>
@@ -230,7 +231,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
         >
           <div className={dropMenu} style={{ minWidth: 300 }}>
             <div className={dropHdr}>
-              <i className="fa-regular fa-message text-orange-400 text-sm"></i>
+              <i className="fa-regular fa-message text-blue-400 text-sm"></i>
               <h6
                 className={`text-sm font-medium ${
                   darkMode ? "text-white/80" : "text-black/80"
@@ -241,10 +242,10 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
             </div>
             {MESSAGES.map((m, i) => (
               <div key={i} className={dropItem}>
-                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 text-orange-500 text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 text-blue-500 text-xs font-bold">
                   {m.name[0]}
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 text-left">
                   <p
                     className={`text-xs font-medium mb-0.5 ${
                       darkMode ? "text-white/70" : "text-black/70"
@@ -260,13 +261,13 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
                     {m.msg}
                   </p>
                 </div>
-                <button className="text-black/15 hover:text-red-400 transition-colors flex-shrink-0 ml-2">
+                <button className="text-black/15 hover:text-red-400 transition-colors shrink-0 ml-2">
                   <i className="fa-solid fa-xmark text-xs"></i>
                 </button>
               </div>
             ))}
             <div className="px-4 py-3 ">
-              <button className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs uppercase tracking-widest transition-colors">
+              <button className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs uppercase tracking-widest transition-colors">
                 Check Messages
               </button>
             </div>
@@ -300,7 +301,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
                 key={l.code}
                 onClick={() => setLang(l.code)}
                 className={`${dropItem} ${
-                  lang === l.code ? "bg-orange-50" : ""
+                  lang === l.code ? "bg-blue-50" : ""
                 }`}
               >
                 <span className="text-base">{l.flag}</span>
@@ -321,7 +322,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
                   </span>
                 )}
                 {lang === l.code && (
-                  <i className="fa-solid fa-check text-orange-400 text-xs ml-auto"></i>
+                  <i className="fa-solid fa-check text-blue-400 text-xs ml-auto"></i>
                 )}
               </div>
             ))}
@@ -342,10 +343,10 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
                 darkMode ? "hover:bg-white/5" : "hover:bg-black/5"
               }`}
             >
-              <div className="w-7 h-7 bg-orange-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+              <div className="w-7 h-7 bg-blue-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
                 {user?.first_name?.[0]?.toUpperCase() || "A"}
               </div>
-              <div className="hidden sm:block leading-tight">
+              <div className="hidden sm:block leading-tight text-left">
                 <p
                   className={`text-xs font-medium ${
                     darkMode ? "text-white/70" : "text-black/70"
@@ -353,7 +354,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
                 >
                   {user?.first_name} {user?.last_name}
                 </p>
-                <p className="text-[0.55rem] text-orange-500 uppercase tracking-wider">
+                <p className="text-[0.55rem] text-blue-500 uppercase tracking-wider">
                   {user?.role || "admin"}
                 </p>
               </div>

@@ -51,7 +51,7 @@ export default function Login() {
       
       // 🔀 Redirection basée sur le rôle
       if (user.role === 'admin') {
-        navigate('/dashboard');
+        navigate('/index');
       } else if (user.role === 'conducteur') {
         navigate('/gps-conducteur');
       } else {

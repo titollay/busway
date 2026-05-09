@@ -1,40 +1,16 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "../assets/img/logo.png";
+import logo from "../../../assets/logo.png";
 import { Link } from "react-router-dom";
 
 const navItems = [
   { href: "/index", icon: "fa-solid fa-gauge", label: "Dashboard" },
-
-  { href: "/index/users", icon: "fa-solid fa-users", label: "Users" },
-
-  {
-    href: "/index/categories",
-    icon: "fa-solid fa-layer-group",
-    label: "Categories",
-  },
-
-  {
-    href: "/index/products",
-    icon: "fa-solid fa-boxes-stacked",
-    label: "Products ",
-  },
-
-  {
-    href: "/index/product",
-    icon: "fa-solid fa-box",
-    label: "Product ",
-  },
-
-  { href: "/index/orders", icon: "fa-solid fa-cart-shopping", label: "Orders" },
-
-  {
-    href: "/index/addresses",
-    icon: "fa-solid fa-location-dot",
-    label: "Addresses",
-  },
-  { href: "/index/newsletter", icon: "fa-solid fa-paper-plane", label: "Newsletter" },
-  { href: "/index/settings", icon: "fa-solid fa-gear", label: "Settings" },
+  { href: "/index/tracking", icon: "fa-solid fa-map-location-dot", label: "Live Tracking" },
+  { href: "/index/buses", icon: "fa-solid fa-bus", label: "Fleet Management" },
+  { href: "/index/lines", icon: "fa-solid fa-route", label: "Lines & Stops" },
+  { href: "/index/drivers", icon: "fa-solid fa-user-tie", label: "Drivers" },
+  { href: "/index/users", icon: "fa-solid fa-users", label: "Passengers" },
+  { href: "/index/settings", icon: "fa-solid fa-gear", label: "System Settings" },
 ];
 
 export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
@@ -45,8 +21,8 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
       <style>{`
         .sidebar-root {
           font-family: 'DM Sans', sans-serif;
-          background: #0a0a0a;
-          border-right: 1px solid rgba(255,255,255,0.05);
+          background: #ffffff;
+          border-right: 1px solid rgba(0,0,0,0.05);
           height: 100dvh;
           display: flex;
           flex-direction: column;
@@ -81,7 +57,7 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
           font-size: 0.78rem;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: rgba(255,255,255,0.4);
+          color: rgba(0,0,0,0.4);
           text-decoration: none;
           border-left: 2px solid transparent;
           transition: all 0.25s ease;
@@ -90,15 +66,15 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
         }
 
         .sb-item:hover {
-          color: rgba(255,255,255,0.9);
-          background: rgba(255,255,255,0.04);
-          border-left-color: rgba(252,140,6,0.4);
+          color: rgba(0,0,0,0.9);
+          background: rgba(0,0,0,0.04);
+          border-left-color: rgba(37,99,235,0.4);
         }
 
         .sb-item.active {
-          color: #FC8C06;
-          background: rgba(252,140,6,0.07);
-          border-left-color: #FC8C06;
+          color: #2563eb;
+          background: rgba(37,99,235,0.07);
+          border-left-color: #2563eb;
         }
 
         .sb-item i {
@@ -109,7 +85,7 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
           transition: color 0.25s ease;
         }
 
-        .sb-item.active i { color: #FC8C06; }
+        .sb-item.active i { color: #2563eb; }
 
         /* Collapse toggle */
         .sb-toggle {
@@ -202,6 +178,21 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
           opacity: 1;
           pointer-events: auto;
         }
+
+        /* Dark mode overrides */
+        :global(.dark) .sidebar-root {
+          background: rgba(17, 24, 39, 0.65) !important;
+          backdrop-filter: blur(12px);
+          border-right-color: rgba(255,255,255,0.05);
+        }
+        :global(.dark) .sb-item { color: rgba(255,255,255,0.4); }
+        :global(.dark) .sb-item:hover { color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.04); border-left-color: rgba(37,99,235,0.4); }
+        :global(.dark) .sb-item.active { color: #3b82f6; background: rgba(59,130,246,0.1); border-left-color: #3b82f6; }
+        :global(.dark) .sb-item.active i { color: #3b82f6; }
+        :global(.dark) .sb-section { color: rgba(255,255,255,0.18); }
+        :global(.dark) .sb-divider { background: rgba(255,255,255,0.05); }
+        :global(.dark) .sb-logout { color: rgba(255,255,255,0.3); border-top-color: rgba(255,255,255,0.05); }
+        :global(.dark) .sb-logout:hover { color: #ef4444; background: rgba(239,68,68,0.1); }
       `}</style>
 
       {/* ── Backdrop for Mobile ── */}
@@ -235,7 +226,7 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
             <img
               src={logo}
               className="h-9 object-contain"
-              alt="logo"
+              alt="BusWay Logo"
               style={{ minWidth: 24 }}
             />
           </a>

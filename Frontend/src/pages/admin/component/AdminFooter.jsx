@@ -4,29 +4,29 @@ export default function AdminFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="px-6 py-6 mt-auto border-t border-gray-200 dark:border-white/5  dark:bg-black/20 backdrop-blur-sm">
+    <footer className="px-6 py-6 mt-auto border-t border-gray-200 dark:border-white/5 dark:bg-gray-900/50 backdrop-blur-md">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <p className="text-[0.7rem] text-gray-400 dark:text-white/20 tracking-wider uppercase">
-            &copy; {year} <span className="text-orange-500 font-semibold">ALLZY</span> Admin v2.1.0
+            &copy; {year} <span className="text-blue-500 font-semibold">BusWay</span> Admin v3.2.0
           </p>
           
           <div className="hidden sm:flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-[0.65rem] text-gray-400 dark:text-white/20 tracking-widest uppercase">System Online</span>
+            <span className="text-[0.65rem] text-gray-400 dark:text-white/20 tracking-widest uppercase">Network Secure</span>
           </div>
         </div>
 
         <div className="flex items-center gap-8">
           <a 
             href="#" 
-            className="text-[0.65rem] text-gray-400 dark:text-white/20 tracking-widest uppercase hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+            className="text-[0.65rem] text-gray-400 dark:text-white/20 tracking-widest uppercase hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
           >
             Documentation
           </a>
           <a 
             href="#" 
-            className="text-[0.65rem] text-gray-400 dark:text-white/20 tracking-widest uppercase hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+            className="text-[0.65rem] text-gray-400 dark:text-white/20 tracking-widest uppercase hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
           >
             Support
           </a>

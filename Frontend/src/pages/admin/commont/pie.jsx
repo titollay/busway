@@ -3,20 +3,11 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function OrdersStatusChart({ orders }) {
-  if (!orders) return null;
+export default function PieChart({ title = "Chart", labels = [], values = [], colorsMap = {}, icon = "fa-chart-pie" }) {
+  if (!labels.length) return null;
 
-  const labels = orders.map((o) => o.status);
-  const values = orders.map((o) => Number(o.total));
-
-  const colors = {
-    paid: "#22C55E",
-    pending: "#F97316",
-    cancelled: "#ef4444",
-    shipped: "#3b82f6",
-  };
-
-  const backgroundColors = labels.map((status) => colors[status] || "#6366f1");
+  const defaultColors = ["#3b82f6", "#22C55E", "#F97316", "#ef4444", "#8b5cf6", "#ec4899"];
+  const backgroundColors = labels.map((label, i) => colorsMap[label] || defaultColors[i % defaultColors.length]);
 
   const data = {
     labels,
@@ -33,15 +24,14 @@ export default function OrdersStatusChart({ orders }) {
   const options = {
     cutout: "65%",
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "bottom",
         labels: {
           color: "#374151",
           padding: 15,
-          font: {
-            size: 13,
-          },
+          font: { size: 13 },
         },
       },
       tooltip: {
@@ -54,18 +44,16 @@ export default function OrdersStatusChart({ orders }) {
   };
 
   return (
-    <div className="bg-white dark:bg-[#111] rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 p-6 w-full transition-colors duration-300">
+    <div className="bg-white dark:bg-gray-900/50 dark:backdrop-blur-xl rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 p-6 w-full transition-colors duration-300 h-full flex flex-col">
       {/* header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-white/80">Orders Status</h2>
-
-        <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-          <i className="fa-solid fa-chart-pie"></i>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-white/80">{title}</h2>
+        <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
+          <i className={`fa-solid ${icon}`}></i>
         </div>
       </div>
-
       {/* chart */}
-      <div className="h-60  flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center min-h-[220px]">
         <Pie data={data} options={options} />
       </div>
     </div>

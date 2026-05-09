@@ -12,6 +12,12 @@ import Register from "./pages/Register";
 import MapUsager from "./pages/MapUsager";
 import GPSConducteur from "./pages/GPSConducteur";
 import Dashboard from "./pages/Dashboard";
+import IndexAdmin from "./pages/admin/index";
+import DashboardAdmin from "./pages/admin/component/dashboard";
+import FleetAdmin from "./pages/admin/Fleet";
+import LinesAdmin from "./pages/admin/Lines";
+import DriversAdmin from "./pages/admin/Drivers";
+import UsersAdmin from "./pages/admin/Users";
 
 // Sections
 import About from "./components/sections/About1";
@@ -20,7 +26,7 @@ import Contact from "./components/sections/Contact";
 
 function App() {
   const location = useLocation();
-  const hideLayout = ["/login", "/register", "/gps-conducteur"].includes(location.pathname);
+  const hideLayout = ["/login", "/register", "/gps-conducteur", "/index", "/index/"].some(path => location.pathname.startsWith(path));
 
   return (
     <>
@@ -36,6 +42,17 @@ function App() {
         <Route path="/map" element={<MapUsager />} />
         <Route path="/gps-conducteur" element={<GPSConducteur />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        
+        {/* Admin Routes */}
+        <Route path="/index/*" element={<IndexAdmin />}>
+          <Route index element={<DashboardAdmin />} />
+          <Route path="tracking" element={<div className="p-10 text-center">Live Tracking Module Under Dev</div>} />
+          <Route path="buses" element={<FleetAdmin />} />
+          <Route path="lines" element={<LinesAdmin />} />
+          <Route path="drivers" element={<DriversAdmin />} />
+          <Route path="users" element={<UsersAdmin />} />
+          <Route path="settings" element={<div className="p-10 text-center">Settings Module Under Dev</div>} />
+        </Route>
       </Routes>
 
       {!hideLayout && <Footer />}
