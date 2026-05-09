@@ -39,13 +39,37 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const response = await axios.post('/api/login', { email: email.trim().toLowerCase(), password });
-      localStorage.setItem('token', response.data.access_token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
-      navigate('/dashboard');
+      const response = await axios.post('/api/auth/login.php', { 
+        email: email.trim().toLowerCase(), 
+        password 
+      });
+      
+      const { token, user } = response.data;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      // 🔀 Redirection basée sur le rôle
+      if (user.role === 'admin') {
+        navigate('/dashboard');
+      } else if (user.role === 'conducteur') {
+        navigate('/gps-conducteur');
+      } else {
+        navigate('/map');
+      }
+
     } catch (err) {
-      console.log(err?.response?.data || err)
-      setError("Identifiants incorrects, veuillez réessayer.");
+      console.error("DEBUG LOGIN ERROR:", err);
+      if (err.response) {
+        // السيرفر استجاب بخطأ (401, 404, 500)
+        console.error("Server Data:", err.response.data);
+        setError(err.response.data.message || "Erreur serveur: " + err.response.status);
+      } else if (err.request) {
+        // الطلب أُرسل ولكن لم يصل رد (مشكلة اتصال/Proxy)
+        setError("Impossible de contacter le serveur. Vérifiez XAMPP.");
+      } else {
+        setError("Erreur inconnue: " + err.message);
+      }
     } finally {
       setLoading(false);
     }

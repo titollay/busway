@@ -39,26 +39,36 @@ $positions = $stmt->fetchAll();
 if (!$positions) jsonError("Bus introuvable");
 
 $bus = $positions[0];
-$speed = 30;
+// ⚙️ Realistic Speed Logic
+$speed = 25; // Default 25 km/h for urban areas
 
-// speed dynamique
 if (count($positions) == 2) {
     $p1 = $positions[0];
     $p2 = $positions[1];
 
-    $distanceKm = distance($p1['latitude'], $p1['longitude'], $p2['latitude'], $p2['longitude']);
-    $timeHours = abs(strtotime($p1['horodatage']) - strtotime($p2['horodatage'])) / 3600;
-
-    if ($timeHours > 0) {
-        $speed = $distanceKm / $timeHours;
+    $distBetween = distance($p1['latitude'], $p1['longitude'], $p2['latitude'], $p2['longitude']);
+    $timeDiffSeconds = abs(strtotime($p1['horodatage']) - strtotime($p2['horodatage']));
+    
+    if ($timeDiffSeconds > 0 && $distBetween > 0.001) {
+        $calculatedSpeed = ($distBetween / ($timeDiffSeconds / 3600));
+        // Cap speed between 10km/h and 50km/h for realism
+        $speed = max(10, min(50, $calculatedSpeed));
     }
 }
 
-$distance = distance($user_lat, $user_lng, $bus['latitude'], $bus['longitude']);
-$eta = ($distance / max($speed, 1)) * 60;
+// Calculate distance to stop
+$distanceToStop = distance($user_lat, $user_lng, $bus['latitude'], $bus['longitude']);
+
+// If bus is very close (less than 100m), ETA is 1 min or 0
+if ($distanceToStop < 0.1) {
+    $eta = 1;
+} else {
+    $eta = ($distanceToStop / $speed) * 60;
+}
 
 jsonResponse([
-    'distance_km' => round($distance, 2),
-    'eta_minutes' => round($eta),
-    'speed_kmh'   => round($speed, 2)
+    'distance_km' => round($distanceToStop, 2),
+    'eta_minutes' => ceil($eta), // Round up to nearest minute
+    'speed_kmh'   => round($speed, 2),
+    'status'      => ($speed < 5) ? 'Trafic intense' : 'Fluide'
 ]);

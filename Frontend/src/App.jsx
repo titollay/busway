@@ -9,6 +9,9 @@ import Footer from "./components/layout/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import MapUsager from "./pages/MapUsager";
+import GPSConducteur from "./pages/GPSConducteur";
+import Dashboard from "./pages/Dashboard";
 
 // Sections
 import About from "./components/sections/About1";
@@ -17,7 +20,7 @@ import Contact from "./components/sections/Contact";
 
 function App() {
   const location = useLocation();
-  const hideLayout = ["/login", "/register"].includes(location.pathname);
+  const hideLayout = ["/login", "/register", "/gps-conducteur"].includes(location.pathname);
 
   return (
     <>
@@ -30,6 +33,9 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/map" element={<MapUsager />} />
+        <Route path="/gps-conducteur" element={<GPSConducteur />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
 
       {!hideLayout && <Footer />}
