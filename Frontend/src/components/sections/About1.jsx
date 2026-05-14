@@ -1,98 +1,198 @@
-import React from "react";
-import bus from "../../assets/bus.jpg";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Pagination, Autoplay } from "swiper/modules";
+
+import bus  from "../../assets/bus.jpg";
 import bus2 from "../../assets/bus2.jpg";
+import wall from "../../assets/wall.webp";
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const images = [bus, bus2, wall, bus2];
+
+const texts = [
+  {
+    num: "01",
+    title: "Vision & Innovation",
+    body: "BusWay est une plateforme dédiée au suivi des bus en temps réel à Oujda — conçue pour aider chaque usager à mieux organiser ses déplacements au quotidien.",
+  },
+  {
+    num: "02",
+    title: "Précision GPS",
+    body: "Grâce à une carte interactive et à l'intégration GPS, vous connaissez à tout moment la position exacte de votre bus et son temps d'arrivée estimé.",
+  },
+  {
+    num: "03",
+    title: "Impact Urbain",
+    body: "Un réseau de 50 lignes, 120 bus connectés et 10 000 voyageurs heureux chaque jour. BusWay, c'est la mobilité urbaine simple et prévisible.",
+  },
+];
+
+// ─── Shared Components ────────────────────────────────────────────────────────
+
+function RoundImg({ src, alt, rotate }) {
+  return (
+    <motion.div 
+      style={{ rotate }}
+      className="h-64 w-44 overflow-hidden rounded-[4rem] shadow-[-20px_20px_60px_rgba(0,0,0,0.4)] border border-white/5 group"
+    >
+      <img
+        src={src}
+        alt={alt}
+        className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+        style={{ filter: "brightness(0.7) contrast(1.1)" }}
+      />
+    </motion.div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function About() {
+  const ref = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start center", "end start"],
+  });
+
+  /* Parallax offsets */
+  const leftY   = useTransform(scrollYProgress, [0, 1], ["-100px", "100px"]);
+  const rightY  = useTransform(scrollYProgress, [0, 1], ["100px", "-100px"]);
+  
+  /* Rotation for a more "organic/rounded" feel */
+  const rotateL = useTransform(scrollYProgress, [0, 1], [-5, 5]);
+  const rotateR = useTransform(scrollYProgress, [0, 1], [5, -5]);
+
+  /* Text block animations */
+  const makeAnim = (range) => ({
+    y:       useTransform(scrollYProgress, range, ["350px", "0px"]),
+    opacity: useTransform(scrollYProgress, range, [0, 1]),
+    scale:   useTransform(scrollYProgress, range, [0.92, 1]),
+  });
+
+  const anims = [
+    makeAnim([0,    0.33]),
+    makeAnim([0.3,  0.63]),
+    makeAnim([0.58, 0.82]),
+  ];
+
   return (
-    <div className="bg-[#070320] text-white overflow-hidden animate-fade-in">
+    <section
+      id="about"
+      ref={ref}
+      className="bg-[#070320] text-white relative"
+      style={{ minHeight: "100vh" }}
+    >
+      {/* Background soft circles */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-[20%] right-[-10%] w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[100px]" />
+      </div>
 
-      {/* ── SECTION 1 : ABOUT US ── */}
-      <section className="max-w-6xl mx-auto px-6 py-24">
-        <div className="flex flex-col md:flex-row items-center gap-16">
+      <div
+        className="min-h-[140vh] max-md:min-h-screen relative flex items-start
+                   justify-between max-md:flex-col
+                   max-w-7xl mx-auto px-6 lg:px-16"
+      >
 
-          {/* LEFT — Texte avec animations */}
-          <div className="flex-1 space-y-6 ml-2 animate-fade-in-delay">
-            <p className="text-blue-400 text-xs uppercase tracking-widest font-medium mb-4 animate-pulse">
-              ABOUT US
+        {/* ── LEFT: Sticky Panel with "Rounded" Imagery ── */}
+        <div
+          className="sticky top-0 h-screen w-full lg:w-1/2 flex flex-col justify-center
+                     max-md:relative max-md:h-auto max-md:py-16"
+        >
+          {/* Section label */}
+          <div className="flex items-center gap-3 mb-6">
+            <span className="w-12 h-px bg-blue-500/50" />
+            <p className="text-[0.7rem] uppercase tracking-[0.4em] text-blue-400 font-semibold">
+              Discovery
             </p>
-
-            <h2
-              className="text-5xl font-bold leading-tight mb-6 text-white transition-all duration-700 hover:scale-[1.02] hover:text-blue-100"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              Suivi des Bus <br /> en Temps Réel
-            </h2>
-
-            <p className="text-sm leading-relaxed text-blue-100 opacity-70 mb-4 max-w-md transition-opacity duration-500 hover:opacity-100">
-              BusWay est une application web dédiée au suivi des bus en temps
-              réel dans la ville. Son objectif est d'aider les usagers du
-              transport public à connaître la position des bus et à mieux
-              organiser leurs déplacements.
-            </p>
-
-            <p className="text-sm leading-relaxed text-blue-100 opacity-70 mb-8 max-w-md transition-opacity duration-500 hover:opacity-100">
-              Grâce à une carte interactive, à l'intégration du GPS et à des
-              notifications, BusWay permet d'obtenir des informations claires
-              et rapides sur les trajets et l'arrivée des bus dans la ville.
-            </p>
-
-            <a
-              href="#"
-              className="group inline-flex items-center gap-2 text-blue-400 text-sm font-medium border-b border-blue-400 border-opacity-40 pb-0.5 transition-all duration-300 hover:border-opacity-100 hover:gap-4 hover:text-blue-300"
-            >
-              Découvrir l'application 
-              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-            </a>
           </div>
 
-          {/* RIGHT — Photos superposées avec effets */}
-          <div
-            className="flex-1 relative w-full group animate-fade-in-delay-2"
-            style={{ minHeight: 360, height: 400 }}
+          {/* Heading */}
+          <h2
+            className="text-5xl lg:text-7xl font-bold text-white leading-[0.95] tracking-tight mb-12"
+            style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            {/* Cadre décoratif derrière avec animation */}
-            <div
-              className="absolute top-0 border-2 border-blue-500/30 rounded-2xl pointer-events-none transition-all duration-700 group-hover:border-blue-400/60 group-hover:scale-105 group-hover:rotate-1"
-              style={{ right: 28, width: "58%", height: "57%" }}
-            />
+            L'Essence<br />
+            <span className="text-blue-500 italic">BusWay</span>
+          </h2>
 
-            {/* Photo principale — haut droite */}
-            <div
-              className="absolute rounded-2xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-blue-500/20 hover:z-10"
-              style={{ top: "3%", right: 0, width: "63%", height: "57%" }}
-            >
-              <img
-                src={bus}
-                alt="Bus en ville"
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-tb from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
+          {/* Overlapping Rounded Image Columns */}
+          <div className="relative w-full mt-24 lg:mt-32 pb-20">
+            <div className="flex items-start justify-start gap-8 lg:gap-12">
+              <motion.div style={{ y: leftY }} className="flex flex-col gap-8">
+                <RoundImg src={images[0]} alt="Bus" rotate={rotateL} />
+                <RoundImg src={images[1]} alt="Comfort" rotate={rotateL} />
+              </motion.div>
+              <motion.div style={{ y: rightY }} className="flex flex-col gap-8 mt-24 lg:mt-32">
+                <RoundImg src={images[2]} alt="Oujda" rotate={rotateR} />
+                <RoundImg src={images[3]} alt="Route" rotate={rotateR} />
+              </motion.div>
             </div>
-
-            {/* Photo secondaire — bas gauche */}
-            <div
-              className="absolute rounded-2xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-blue-500/20 hover:z-10"
-              style={{ bottom: 0, left: 0, width: "53%", height: "51%" }}
-            >
-              <img
-                src={bus2}
-                alt="Intérieur bus"
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-tb from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
-            </div>
-
-            {/* Élément décoratif flottant */}
-            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl animate-fade-in-delay" />
-            <div className="absolute -top-4 -left-4 w-16 h-16 bg-purple-500/10 rounded-full blur-xl animate-fade-in-delay-2" />
-
           </div>
-
         </div>
-      </section>
 
+        {/* ── RIGHT: Scrolling Text Blocks ── */}
+        <div
+          className="w-full lg:w-1/2 flex flex-col gap-[30vh] lg:pl-16 py-[25vh] max-md:hidden"
+        >
+          {texts.map((t, i) => (
+            <motion.div
+              key={i}
+              style={anims[i]}
+              className="group flex flex-col gap-6"
+            >
+              {/* Number Index */}
+              <div className="flex items-end gap-4">
+                  <span className="text-6xl font-bold opacity-10 font-serif leading-none">
+                      {t.num}
+                  </span>
+                  <div className="h-px bg-blue-500/30 w-full mb-2" />
+              </div>
 
+              {/* Title */}
+              <h4 className="text-blue-400 text-sm uppercase tracking-widest font-bold">
+                {t.title}
+              </h4>
 
-    </div>
+              {/* Body */}
+              <p
+                className="text-2xl lg:text-3xl font-light text-gray-100 leading-snug lg:max-w-md"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                {t.body}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* ── MOBILE: Content Slider ── */}
+        <div className="lg:hidden w-full pb-20">
+          <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-md">
+            <Swiper
+              modules={[Pagination, Autoplay]}
+              pagination={{ clickable: true }}
+              autoplay={{ delay: 4000 }}
+              spaceBetween={30}
+              slidesPerView={1}
+            >
+              {texts.map((t, i) => (
+                <SwiperSlide key={i} className="flex flex-col gap-4 pb-12">
+                  <h4 className="text-blue-500 text-xs uppercase tracking-widest font-bold">{t.title}</h4>
+                  <p className="text-xl text-gray-200 font-light leading-relaxed font-serif">
+                    {t.body}
+                  </p>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
+
+      </div>
+    </section>
   );
 }

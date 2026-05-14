@@ -125,7 +125,7 @@ function TestimonialCard({ t }) {
 
 export default function Testimonials() {
   return (
-    <div id="testimonial" className="relative bg-[#070320]">
+    <div id="testimonials" className="relative bg-[#070320]">
       <section className="relative text-white overflow-hidden ">
         {/* Overlay */}
         <div className="absolute inset-0 bg-linear-to-b from-[#070320] via-transparent to-[#070320] z-0" />

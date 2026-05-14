@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import PieChart from "./commont/pie";
+import PieChart from "../common/pie";
 
 export default function Drivers() {
   const [drivers, setDrivers] = useState([]);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import BarChart from "./commont/bar";
+import BarChart from "../common/bar";
 
 export default function Lines() {
   const [lines, setLines] = useState([]);

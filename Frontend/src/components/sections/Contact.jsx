@@ -146,8 +146,8 @@ export default function Contact() {
           >
             {/* <span className="section-number">04</span> */}
             <div className="relative">
-              <p className="text-xs uppercase tracking-[0.3em] text-blue-600 mb-4">
-                <span className="divider-line" />
+              <p className="text-xs uppercase tracking-[0.3em] text-blue-400 mb-4 flex items-center gap-2">
+                <span className="w-8 h-px bg-blue-400 inline-block" />
                 Contactez-nous
               </p>
               <h2 className="contact-display text-5xl lg:text-7xl font-light leading-[1.05] mb-4 text-white">
@@ -244,8 +244,8 @@ export default function Contact() {
               }}
             >
               <div className="border-t border-gray-800 pt-10">
-                <p className="text-xs uppercase tracking-[0.3em] text-blue-600 mb-2">
-                  <span className="divider-line" />
+                <p className="text-xs uppercase tracking-[0.3em] text-blue-400 mb-4 flex items-center gap-2">
+                  <span className="w-8 h-px bg-blue-400 inline-block" />
                   Laissez-nous un message
                 </p>
                 <h3 className="contact-display text-3xl lg:text-4xl font-light mb-8 text-white">

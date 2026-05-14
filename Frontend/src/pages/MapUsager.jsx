@@ -2,9 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Navigation, Clock, MapPin, Activity, Bus, Compass, Layers, Sun, Moon, Eye, EyeOff, Search } from "lucide-react";
+import { Navigation, Clock, MapPin, Activity, Bus, Compass, Layers, Sun, Moon, Eye, EyeOff, Search, LogOut } from "lucide-react";
 import axios from "axios";
 import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
+
+import logo from "../assets/logo.png";
 
 // --- HELPERS ---
 const getRotation = (start, end) => {
@@ -82,6 +85,7 @@ function SmoothBus({ busData, isSelected, isNight, onSelect }) {
 }
 
 export default function MapUsager() {
+  const navigate = useNavigate();
   const [buses, setBuses] = useState({});
   const [stops, setStops] = useState([]);
   const [userPos, setUserPos] = useState([34.685, -1.912]);
@@ -134,15 +138,21 @@ export default function MapUsager() {
     else if (val === "") setSelectedBusId(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   const activeBus = selectedBusId ? buses[selectedBusId] : null;
 
   return (
     <div className={`h-screen w-full relative overflow-hidden ${mapStyle}`}>
       <div className="absolute top-6 left-6 right-6 z-1000 flex items-center justify-between pointer-events-none">
          <div className="flex items-center gap-4 bg-black/80 backdrop-blur-3xl p-2.5 rounded-[2.5rem] border border-white/10 shadow-2xl pointer-events-auto group text-left">
-            <div onClick={() => setSelectedBusId(null)} className="w-14 h-14 bg-linear-to-br from-blue-500 to-blue-700 rounded-3xl flex items-center justify-center cursor-pointer shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all active:scale-90 overflow-hidden relative">
-               <Bus className="text-white w-7 h-7 relative z-10" />
-               <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div onClick={() => setSelectedBusId(null)} className="w-14 h-14 bg-white rounded-3xl flex items-center justify-center cursor-pointer shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all active:scale-90 overflow-hidden relative">
+               <img src={logo} alt="BusWay Logo" className="w-11 h-11 object-contain relative z-10" />
+               <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
             <div className="pr-6">
                <h1 className="text-2xl font-black tracking-tight text-white leading-none">Bus<span className="text-blue-500">Way</span></h1>
@@ -159,11 +169,31 @@ export default function MapUsager() {
                <input type="text" placeholder="Entrez N° Bus (ex: 1)..." value={searchID} onChange={handleSearch} className="bg-transparent border-none outline-none text-white text-sm font-bold w-full placeholder:text-gray-600 placeholder:font-black tracking-wide" />
             </div>
             <div className="flex gap-2">
-               {Object.keys(MAP_STYLES).map(style => (
-                  <button key={style} onClick={() => setMapStyle(style)} className={`w-14 h-14 rounded-3xl backdrop-blur-3xl flex items-center justify-center transition-all border ${mapStyle === style ? 'bg-blue-600 border-blue-400 text-white shadow-lg' : 'bg-black/80 border-white/10 text-gray-400'}`}>
-                     {style === 'dark' ? <Moon className="w-5 h-5" /> : style === 'light' ? <Sun className="w-5 h-5" /> : <Layers className="w-5 h-5" />}
-                  </button>
-               ))}
+               {/* Bouton Toggle Dark/Light */}
+               <button 
+                  onClick={() => setMapStyle(mapStyle === 'dark' ? 'light' : 'dark')} 
+                  className={`w-14 h-14 rounded-3xl backdrop-blur-3xl flex items-center justify-center transition-all border outline-none ${mapStyle !== 'sat' ? 'bg-blue-600 border-blue-400 text-white shadow-lg' : 'bg-black/80 border-white/10 text-gray-400'}`}
+                  title="Changer Mode (Sombre/Clair)"
+               >
+                  {mapStyle === 'light' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+               </button>
+
+               {/* Bouton Satellite (Indépendant) */}
+               <button 
+                  onClick={() => setMapStyle('sat')} 
+                  className={`w-14 h-14 rounded-3xl backdrop-blur-3xl flex items-center justify-center transition-all border outline-none ${mapStyle === 'sat' ? 'bg-blue-600 border-blue-400 text-white shadow-lg' : 'bg-black/80 border-white/10 text-gray-400'}`}
+                  title="Mode Satellite"
+               >
+                  <Layers className="w-5 h-5" />
+               </button>
+
+               <button 
+                  onClick={handleLogout} 
+                  className="w-14 h-14 rounded-3xl backdrop-blur-3xl flex items-center justify-center transition-all border bg-red-600/10 border-red-500/20 text-red-500 hover:bg-red-600 hover:text-white hover:border-red-400 shadow-xl group/logout"
+                  title="Déconnexion"
+               >
+                  <LogOut className="w-5 h-5 transition-transform group-hover/logout:-translate-x-1" />
+               </button>
             </div>
          </div>
       </div>
@@ -171,11 +201,42 @@ export default function MapUsager() {
       <MapContainer center={[34.685, -1.912]} zoom={14} className="h-full w-full" zoomControl={false}>
         <TileLayer url={MAP_STYLES[mapStyle]} />
         {stops.map(stop => (
-           <Marker key={`stop-${stop.id_arret}`} position={[parseFloat(stop.latitude), parseFloat(stop.longitude)]} icon={L.divIcon({ className: 'stop-marker', html: `<div class="stop-inner"></div><div class="stop-glow"></div>`, iconSize: [12, 12], iconAnchor: [6, 6] })} zIndexOffset={500}>
+           <Marker 
+              key={`stop-${stop.id_arret}`} 
+              position={[parseFloat(stop.latitude), parseFloat(stop.longitude)]} 
+              icon={L.divIcon({ 
+                 className: 'stop-marker-v2', 
+                 html: `<div class="stop-container">
+                          <div class="stop-main-icon">
+                             <svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M17 2H7C5.9 2 5 2.9 5 4V19C5 20.1 5.9 21 7 21V23H9V21H15V23H17V21C18.1 21 19 20.1 19 19V4C19 2.9 18.1 2 17 2ZM7 4H17V9H7V4ZM17 19H7V11H17V19ZM15 13H9V15H15V13Z"/></svg>
+                          </div>
+                          <div class="stop-glow-effect"></div>
+                        </div>`, 
+                 iconSize: [24, 24], 
+                 iconAnchor: [12, 12] 
+              })} 
+              zIndexOffset={500}
+           >
               <Popup><b className="text-[10px] uppercase font-black">{stop.nom_arret}</b></Popup>
            </Marker>
         ))}
-        {userPos && <Marker position={[parseFloat(userPos[0]), parseFloat(userPos[1])]} icon={L.divIcon({ className: 'user-location-marker', html: `<div class="radar-ping"></div><div class="user-dot"></div>`, iconSize: [20, 20], iconAnchor: [10, 10] })} zIndexOffset={2000} />}
+        {userPos && (
+           <Marker 
+              position={[parseFloat(userPos[0]), parseFloat(userPos[1])]} 
+              icon={L.divIcon({ 
+                 className: 'user-marker-pro', 
+                 html: `<div class="user-marker-wrapper">
+                          <div class="user-vignette">
+                             <svg viewBox="0 0 24 24" width="14" height="14" fill="white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                          </div>
+                          <div class="user-pulse-ring"></div>
+                        </div>`, 
+                 iconSize: [32, 32], 
+                 iconAnchor: [16, 16] 
+              })} 
+              zIndexOffset={2000} 
+           />
+        )}
         {Object.values(buses).map(bus => <SmoothBus key={`bus-pro-${bus.id_bus}`} busData={bus} isSelected={selectedBusId === bus.id_bus} isNight={isNightTime} onSelect={setSelectedBusId} />)}
         <CameraFollow busPos={activeBus ? [activeBus.latitude, activeBus.longitude] : null} active={!!selectedBusId} />
       </MapContainer>
@@ -220,11 +281,35 @@ export default function MapUsager() {
 
       <style>{`
         .leaflet-marker-icon { transition: none !important; }
-        .stop-inner { width: 8px; height: 8px; background: white; border: 2px solid #3b82f6; border-radius: 50%; z-index: 2; position: absolute; }
-        .stop-glow { width: 14px; height: 14px; background: rgba(59, 130, 246, 0.4); border-radius: 50%; filter: blur(4px); position: absolute; top: -3px; left: -3px; }
-        .user-dot { width: 12px; height: 12px; background: #3b82f6; border: 2px solid white; border-radius: 50%; position: absolute; top: 4px; left: 4px; z-index: 2; box-shadow: 0 0 15px #3b82f6; }
-        .radar-ping { width: 20px; height: 20px; background: rgba(59, 130, 246, 0.3); border-radius: 50%; animation: ping 2s infinite; position: absolute; }
-        @keyframes ping { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(4); opacity: 0; } }
+        
+        /* New Stop Marker Styles */
+        .stop-container { position: relative; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+        .stop-main-icon { 
+           width: 20px; height: 20px; background: #3b82f6; border: 2.5px solid white; border-radius: 8px; 
+           display: flex; align-items: center; justify-content: center; z-index: 2;
+           box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 8px rgba(59,130,246,0.6);
+           transition: transform 0.3s ease;
+        }
+        .stop-container:hover .stop-main-icon { transform: scale(1.2) rotate(-5deg); background: #2563eb; }
+        .stop-glow-effect { 
+           position: absolute; width: 100%; height: 100%; background: rgba(59, 130, 246, 0.25); 
+           border-radius: 50%; z-index: 1; animation: stop-pulse 2.5s infinite;
+        }
+        @keyframes stop-pulse { 0% { transform: scale(0.8); opacity: 0.8; } 100% { transform: scale(3.2); opacity: 0; } }
+
+        /* User Location Marker */
+        .user-marker-wrapper { position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+        .user-vignette { 
+           width: 26px; height: 26px; background: #ef4444; border: 2.5px solid white; border-radius: 50%; 
+           display: flex; align-items: center; justify-content: center; z-index: 5;
+           box-shadow: 0 0 20px rgba(239,68,68,0.8), inset 0 0 8px rgba(255,255,255,0.3);
+        }
+        .user-pulse-ring { 
+           position: absolute; width: 100%; height: 100%; background: rgba(239, 68, 68, 0.4); 
+           border-radius: 50%; z-index: 1; animation: user-ping-pro 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes user-ping-pro { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(4.5); opacity: 0; } }
+
         .bus-pro-icon .bus-wrapper { width: 36px; height: 36px; position: relative; }
         .bus-pro-icon .bus-wrapper img { width: 36px !important; height: 36px !important; }
         .heading-arrow { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 9px solid #3b82f6; }
