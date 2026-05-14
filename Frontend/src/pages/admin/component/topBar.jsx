@@ -92,7 +92,7 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
       className="h-17.5 flex items-center justify-between px-5 gap-4 shrink-0 z-40 relative w-full transition-all duration-300"
       style={{
         fontFamily: "'DM Sans',sans-serif",
-        background: darkMode ? "rgba(17, 24, 39, 0.65)" : "#ffffff",
+        background: darkMode ? "#0a0a0a" : "#ffffff",
         backdropFilter: darkMode ? "blur(12px)" : "none",
         borderBottom: darkMode
           ? "1px solid rgba(255,255,255,0.05)"

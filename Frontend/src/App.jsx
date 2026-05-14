@@ -14,10 +14,10 @@ import GPSConducteur from "./pages/GPSConducteur";
 import Dashboard from "./pages/Dashboard";
 import IndexAdmin from "./pages/admin/index";
 import DashboardAdmin from "./pages/admin/component/dashboard";
-import FleetAdmin from "./pages/admin/Fleet";
-import LinesAdmin from "./pages/admin/Lines";
-import DriversAdmin from "./pages/admin/Drivers";
-import UsersAdmin from "./pages/admin/Users";
+import FleetAdmin from "./pages/admin/component/Fleet";
+import LinesAdmin from "./pages/admin/component/Lines";
+import DriversAdmin from "./pages/admin/component/Drivers";
+import UsersAdmin from "./pages/admin/component/Users";
 
 // Sections
 import About from "./components/sections/About1";

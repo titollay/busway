@@ -4,7 +4,7 @@ export default function AdminFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="px-6 py-6 mt-auto border-t border-gray-200 dark:border-white/5 dark:bg-gray-900/50 backdrop-blur-md">
+    <footer className="px-6 py-4 mt-auto border-t border-gray-200 dark:border-white/5 dark:bg-[#0a0a0a] backdrop-blur-sm">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <p className="text-[0.7rem] text-gray-400 dark:text-white/20 tracking-wider uppercase">

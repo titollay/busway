@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import PieChart from "./commont/pie";
-import BarChart from "./commont/bar";
+import PieChart from "../common/pie";
+import BarChart from "../common/bar";
 // Assuming config is available 2 levels up relative to pages
 
 export default function Fleet() {

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -39,9 +40,20 @@ const item = {
 };
 
 export default function Hero() {
+  const navigate = useNavigate();
   const [count, setCount] = useState(0);
   const sectionRef = useRef(null);
   const [startCount, setStartCount] = useState(false);
+
+  const handleTrouverBus = (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/map");
+    } else {
+      navigate("/login");
+    }
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -78,6 +90,7 @@ export default function Hero() {
     <>
 
       <section
+        id="home"
         ref={sectionRef}
         className="hero-root   flex flex-col justify-center relative font-poppins  z-0 px-8  xl:py-32   lg:py-28 lg:px-10 hero-root  sm:px-8 xl:px-14 py-10 sm:py-10   "
       >
@@ -123,6 +136,7 @@ export default function Hero() {
             >
               <a
                 href="#"
+                onClick={handleTrouverBus}
                 className="text-center px-6 py-2.5  text-lg xl:text-xl lg:text-sm font-semibold text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 transition-all transform hover:scale-105"
                 id="heroBookBtn"
               >

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Card from "../commont/card";
+import Card from "../common/card";
 import { Bus, MapPin, Route, Users, Activity, ShieldCheck, Map as MapIcon, Clock } from "lucide-react";
 
 const TABS = [
@@ -136,7 +136,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="px-4 py-8 space-y-6 sm:py-5 min-h-screen">
+    <div className="px-4 py-8 space-y-6 sm:py-5 min-h-full">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -16 }}
@@ -206,14 +206,41 @@ export default function Dashboard() {
                             <h4 className="text-lg font-black text-gray-900 dark:text-white">Transit Network Load</h4>
                             <p className="text-xs text-gray-500">Hourly passenger distribution</p>
                         </div>
-                        <Activity className="w-16 h-16 text-blue-500/20 mb-4 animate-pulse" />
-                        <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-400">Visualizing Real-time Matrix...</p>
-                        <div className="mt-8 flex gap-2">
-                           {[40, 70, 45, 90, 65, 80, 50].map((h, i) => (
-                               <div key={i} className="w-4 bg-blue-600/10 rounded-full h-32 relative overflow-hidden">
-                                   <motion.div initial={{ height: 0 }} animate={{ height: `${h}%` }} transition={{ duration: 1, delay: i * 0.1 }} className="absolute bottom-0 w-full bg-blue-500" />
+                        <div className="absolute top-8 right-8 flex items-center gap-2">
+                           <div className="w-2 h-2 rounded-full bg-green-500 animate-ping"></div>
+                           <span className="text-[0.6rem] font-black uppercase tracking-tighter text-green-500">Live Stream</span>
+                        </div>
+                        
+                        <div className="flex flex-col items-center">
+                           <Activity className="w-16 h-16 text-blue-500/20 mb-4 animate-pulse" />
+                           <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-400">Visualizing Real-time Matrix...</p>
+                        </div>
+
+                        <div className="mt-8 flex items-end gap-3 h-40">
+                           {[40, 70, 45, 90, 65, 80, 50, 60, 85, 45, 75, 40].map((h, i) => (
+                               <div key={i} className="flex flex-col items-center gap-2 group/bar cursor-help">
+                                   <div className="w-5 bg-blue-600/5 dark:bg-blue-600/10 rounded-t-xl h-32 relative overflow-hidden">
+                                       <motion.div 
+                                          initial={{ height: 0 }} 
+                                          animate={{ height: `${h}%` }} 
+                                          transition={{ duration: 1.5, delay: i * 0.05, ease: "circOut" }} 
+                                          className="absolute bottom-0 w-full bg-gradient-to-t from-blue-600 to-blue-400 group-hover/bar:from-blue-500 group-hover/bar:to-blue-300 transition-all shadow-[0_0_15px_rgba(59,130,246,0.2)]" 
+                                       />
+                                   </div>
+                                   <span className="text-[0.55rem] font-bold text-gray-400 opacity-0 group-hover/bar:opacity-100 transition-opacity">{h}%</span>
                                </div>
                            ))}
+                        </div>
+                        
+                        <div className="mt-6 flex gap-8">
+                           <div className="text-left">
+                              <p className="text-[0.6rem] font-black text-gray-400 uppercase tracking-widest mb-1">Peak Hour</p>
+                              <p className="text-sm font-black text-gray-900 dark:text-white">08:30 AM</p>
+                           </div>
+                           <div className="text-left border-l border-gray-100 dark:border-white/5 pl-8">
+                              <p className="text-[0.6rem] font-black text-gray-400 uppercase tracking-widest mb-1">Network Capacity</p>
+                              <p className="text-sm font-black text-green-500">82% Operational</p>
+                           </div>
                         </div>
                      </div>
                   </div>

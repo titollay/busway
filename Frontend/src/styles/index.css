@@ -8,6 +8,8 @@
   --color-brand-blue: #3B82F6;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --bg-dark: #07041B;
   --bg-darker: #04020f;
@@ -18,8 +20,8 @@
 }
 
 body {
-  background-color: var(--bg-dark);
-  color: white;
+
+
   overflow-x: clip;
 }
 

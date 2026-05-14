@@ -6,12 +6,11 @@ import logo from "../../assets/logo.png";
 const MotionDiv = motion.div;
 
 const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "Services", href: "/services", page: "/suivi-bus" },
-  { label: "Testimonials", href: "#testimonial" },
-  { label: "Contact", href: "/contact" },
-  
+  { label: "Home", href: "#home" },
+  { label: "About Us", href: "#about" },
+  { label: "Services", href: "#services" },
+  { label: "Testimonials", href: "#testimonials" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export default function NavBar({ className = "" }) {
@@ -46,6 +45,17 @@ export default function NavBar({ className = "" }) {
         const el = document.querySelector(href);
         if (el) el.scrollIntoView({ behavior: "smooth" });
       }, 400);
+    }
+    setMenuOpen(false);
+  };
+
+  const handleSuiviBus = (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/map");
+    } else {
+      navigate("/login");
     }
     setMenuOpen(false);
   };
@@ -129,7 +139,8 @@ export default function NavBar({ className = "" }) {
                 <span className="absolute top-0 left-0 w-0 h-full bg-blue-500 transition-all duration-500 group-hover:w-full"></span>
                 <a
                   className="relative z-10 text-xs xl:text-sm shadow-2xl text-shadow-2xs 2xl:text-base sm:text-sm text-blue-500 font-semibold group-hover:text-white transition-colors"
-                  href="/suivi-bus"
+                  href="#"
+                  onClick={handleSuiviBus}
                 >
                   Suivi Bus
                 </a>
@@ -216,9 +227,10 @@ export default function NavBar({ className = "" }) {
                     <span className="absolute top-0 left-0 w-0 h-full bg-blue-500 transition-all duration-500 group-hover:w-full"></span>
                     <a
                       className="relative z-10 text-xs xl:text-sm shadow-2xl text-shadow-2xs w-full text-center block 2xl:text-base sm:text-sm text-blue-500 font-semibold group-hover:text-white transition-colors"
-                      href="/items"
+                      href="#"
+                      onClick={handleSuiviBus}
                     >
-                     Suivi Bus
+                      Suivi Bus
                     </a>
                   </div>
                 )}

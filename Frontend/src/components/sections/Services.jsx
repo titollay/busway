@@ -12,11 +12,19 @@ function Services() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#070320] py-16 px-6 text-white">
-      <h1 className="text-4xl font-bold text-center text-blue-400 mb-4">Nos Services</h1>
-      <p className="text-center text-gray-300 mb-14">
-        Découvrez les fonctionnalités de <strong>BusWay</strong> pour faciliter vos déplacements.
-      </p>
+    <div id="services" className="min-h-screen bg-[#070320] py-16 px-6 text-white">
+      <div className="max-w-6xl mx-auto px-6 mb-14">
+        <p className="text-xs uppercase tracking-[0.3em] text-blue-400 mb-4 flex items-center gap-2">
+          <span className="w-8 h-px bg-blue-400 inline-block" />
+          Nos Services
+        </p>
+        <h2 className="text-3xl lg:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
+          Ce que nous offrons
+        </h2>
+        <p className="text-gray-400 max-w-xl leading-relaxed">
+          Découvrez les fonctionnalités de <strong className="text-blue-400">BusWay</strong> pour faciliter vos déplacements.
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
         {services.map((service, index) => (

@@ -47,8 +47,8 @@ export default function IndexAdmin() {
         {/* هنا نضيف scroll */}
         <div className="flex-1 overflow-y-auto ">
           <Outlet />
-          <AdminFooter />
         </div>
+        <AdminFooter />
       </div>
     </div>
   );
