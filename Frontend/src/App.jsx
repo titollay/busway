@@ -26,7 +26,7 @@ import Contact from "./components/sections/Contact";
 
 function App() {
   const location = useLocation();
-  const hideLayout = ["/login", "/register", "/gps-conducteur", "/index", "/index/"].some(path => location.pathname.startsWith(path));
+  const hideLayout = ["/login", "/register", "/gps-conducteur", "/index", "/index/", "/map"].some(path => location.pathname.startsWith(path));
 
   return (
     <>
