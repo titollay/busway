@@ -22,7 +22,13 @@ $stops = [
     'Sidi Maafa' => [34.636821, -1.927212],
     'Hay Al Farah' => [34.664512, -1.930632],
     'Hay Lazaret' => [34.690512, -1.885632],
-    'Zone industrielle' => [34.708512, -1.881632]
+    'Zone industrielle' => [34.708512, -1.881632],
+    'Arrêt Bd Brahim Roudani' => [34.675592, -1.870379],
+    'Arrêt Lotissement Bensahli' => [34.6740, -1.8685],
+    'Arrêt Boulevard Bourchid M\'barek' => [34.6780, -1.8710],
+    'Arrêt Hay Saada (Haut)' => [34.6770, -1.8730],
+    'Arrêt Lotissement Msirdi' => [34.6750, -1.8745],
+    'Arrêt Hay Saada 2 (Mosquée)' => [34.6745, -1.8720]
 ];
 
 $arret_ids = [];
@@ -54,7 +60,7 @@ foreach ($lines_data as $l) {
 
 // 🔗 3. Mapping Lines to Stops (Ligne_Arret)
 $mapping = [
-    1 => ['Bab Sidi Abdelwahab', 'Centre-ville (Place 16 Aout)', 'Hay El Qods', 'Université Mohammed Premier'],
+    1 => ['Bab Sidi Abdelwahab', 'Centre-ville (Place 16 Aout)', 'Arrêt Boulevard Bourchid M\'barek', 'Arrêt Hay Saada (Haut)', 'Arrêt Hay Saada 2 (Mosquée)', 'Arrêt Lotissement Msirdi', 'Arrêt Bd Brahim Roudani', 'Arrêt Lotissement Bensahli'],
     2 => ['Gare Routière', 'Centre-ville (Place 16 Aout)', 'Hay El Qods', 'Sidi Yahya'],
     3 => ['Sidi Maafa', 'Centre-ville (Place 16 Aout)', 'Hay Al Farah', 'Université Mohammed Premier'],
     4 => ['Hay El Qods', 'Centre-ville (Place 16 Aout)', 'Gare ONCF (Train)'],
