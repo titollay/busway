@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
+import styled from "styled-components";
 import {
   Area,
   AreaChart,
@@ -125,6 +126,34 @@ export default function Users() {
     return Math.ceil(max + 1);
   }, [chartData]);
 
+  const stats = useMemo(() => {
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    const startOfWeek = new Date(now);
+    const day = startOfWeek.getDay() || 7;
+    if (day !== 1) {
+      startOfWeek.setDate(startOfWeek.getDate() - (day - 1));
+    }
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    let weekCount = 0;
+    let monthCount = 0;
+    let yearCount = 0;
+    
+    users.forEach((u) => {
+      const d = parseDate(u.created_at);
+      if (!d) return;
+      
+      if (d >= startOfWeek) weekCount++;
+      if (d >= startOfMonth) monthCount++;
+      if (d >= startOfYear) yearCount++;
+    });
+    
+    return { week: weekCount, month: monthCount, year: yearCount };
+  }, [users]);
+
   const pagination = getPagination(users, page, PAGE_SIZE);
 
   useEffect(() => {
@@ -145,6 +174,12 @@ export default function Users() {
           <h1 className="text-3xl font-black text-gray-900 dark:text-white mb-2">Passenger App Users</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm">Monitor app usage and passenger accounts.</p>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatsCard title="Cette Semaine" count={stats.week} desc="Nouvelles inscriptions au cours des 7 derniers jours." />
+        <StatsCard title="Ce Mois" count={stats.month} desc="Nouvelles inscriptions pour le mois en cours." />
+        <StatsCard title="Cette Année" count={stats.year} desc="Nouvelles inscriptions pour l'année en cours." />
       </div>
 
       <div className="w-full min-h-[300px]">
@@ -249,3 +284,121 @@ export default function Users() {
     </div>
   );
 }
+
+const StyledWrapper = styled.div`
+  .card-title {
+    color: #111827;
+    font-size: 1.5em;
+    line-height: normal;
+    font-weight: 900;
+    margin-bottom: 0.5em;
+    transition: all 0.4s ease-out;
+  }
+
+  .small-desc {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5em;
+    color: #6b7280;
+    transition: all 0.4s ease-out;
+  }
+
+  .go-corner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 2.5em;
+    height: 2.5em;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    background: #3b82f6;
+    border-radius: 0 14px 0 32px;
+  }
+
+  .go-arrow {
+    margin-top: -6px;
+    margin-right: -6px;
+    color: white;
+    font-weight: bold;
+  }
+
+  .card {
+    display: block;
+    position: relative;
+    width: 100%;
+    min-height: 140px;
+    background-color: #ffffff;
+    border-radius: 14px;
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    padding: 2em 1.5em;
+    text-decoration: none;
+    z-index: 0;
+    overflow: hidden;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .card:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -16px;
+    right: -16px;
+    background: #2563eb;
+    height: 32px;
+    width: 32px;
+    border-radius: 32px;
+    transform: scale(1);
+    transform-origin: 50% 50%;
+    transition: transform 0.4s ease-out;
+  }
+
+  .card:hover:before {
+    transform: scale(35);
+  }
+
+  .card:hover .small-desc {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .card:hover .card-title {
+    color: #ffffff;
+  }
+
+  .dark & .card, :global(.dark) & .card {
+    background-color: rgba(17, 24, 39, 0.78);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+  }
+  
+  .dark & .card-title, :global(.dark) & .card-title {
+    color: #ffffff;
+  }
+
+  .dark & .small-desc, :global(.dark) & .small-desc {
+    color: #9ca3af;
+  }
+
+  .dark & .card:before, :global(.dark) & .card:before {
+    background: #3b82f6;
+  }
+`;
+
+const StatsCard = ({ title, count, desc }) => {
+  return (
+    <StyledWrapper>
+      <div className="card shadow-sm border border-gray-100 dark:border-white/5">
+        <p className="card-title">{count} Users</p>
+        <p className="small-desc" style={{ fontWeight: 'bold', color: '#3b82f6', marginBottom: '0.5rem', fontSize: '1.1em' }}>{title}</p>
+        <p className="small-desc">
+          {desc}
+        </p>
+        <div className="go-corner">
+          <div className="go-arrow">→</div>
+        </div>
+      </div>
+    </StyledWrapper>
+  );
+};

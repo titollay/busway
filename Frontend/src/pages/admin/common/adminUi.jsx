@@ -35,11 +35,11 @@ export function Breadcrumb({ crumbs }) {
   );
 }
 
-export function MetricCard({ label, value, helper, icon: Icon }) {
+export function MetricCard({ label, value, helper, icon: Icon, color = "blue" }) {
   return (
     <div className="busway-glow-card min-h-[150px]">
       <div className="busway-card-bg" />
-      <div className="busway-card-blob" />
+      <div className={`busway-card-blob blob-${color}`} />
       <div className="relative z-[3] flex h-full min-h-[150px] flex-col justify-between p-5">
         <div className="flex items-start justify-between gap-3">
           <p className="text-[0.62rem] uppercase tracking-widest text-gray-500 dark:text-white/45">

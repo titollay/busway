@@ -304,6 +304,18 @@
   border: none;
   background: transparent;
   box-shadow: 18px 18px 42px rgba(148, 163, 184, 0.22), -18px -18px 42px rgba(255, 255, 255, 0.9);
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.busway-glow-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 20px 20px 45px rgba(148, 163, 184, 0.26), -20px -20px 45px rgba(255, 255, 255, 0.9);
+}
+
+.busway-glow-card:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 10px 10px 30px rgba(148, 163, 184, 0.18), -10px -10px 30px rgba(255, 255, 255, 0.9);
 }
 
 .busway-card-bg {
@@ -325,11 +337,17 @@
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background: #3b82f6;
   opacity: 0.9;
-  filter: blur(12px);
+  filter: blur(14px);
   animation: busway-blob-bounce 5s infinite ease;
 }
+
+.blob-blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+.blob-emerald { background: linear-gradient(135deg, #10b981, #34d399); }
+.blob-purple { background: linear-gradient(135deg, #8b5cf6, #c084fc); }
+.blob-amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+.blob-pink { background: linear-gradient(135deg, #ec4899, #f472b6); }
+.blob-rose { background: linear-gradient(135deg, #f43f5e, #fb7185); }
 
 .dark .busway-panel {
   border-color: rgba(255, 255, 255, 0.08);
@@ -341,15 +359,29 @@
   box-shadow: 18px 18px 42px rgba(0, 0, 0, 0.24), -18px -18px 42px rgba(255, 255, 255, 0.02);
 }
 
+.dark .busway-glow-card:hover {
+  box-shadow: 20px 20px 45px rgba(0, 0, 0, 0.3), -20px -20px 45px rgba(255, 255, 255, 0.03);
+}
+
+.dark .busway-glow-card:active {
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.15), -10px -10px 30px rgba(255, 255, 255, 0.01);
+}
+
 .dark .busway-card-bg {
   outline-color: rgba(255, 255, 255, 0.08);
   background: rgba(17, 24, 39, 0.92);
 }
 
 .dark .busway-card-blob {
-  background: #2563eb;
   opacity: 0.75;
 }
+
+.dark .blob-blue { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+.dark .blob-emerald { background: linear-gradient(135deg, #059669, #10b981); }
+.dark .blob-purple { background: linear-gradient(135deg, #7c3aed, #8b5cf6); }
+.dark .blob-amber { background: linear-gradient(135deg, #d97706, #f59e0b); }
+.dark .blob-pink { background: linear-gradient(135deg, #db2777, #ec4899); }
+.dark .blob-rose { background: linear-gradient(135deg, #e11d48, #f43f5e); }
 
 @keyframes busway-blob-bounce {
   0% {
@@ -379,7 +411,7 @@
 }
 
 .busway-table th {
-  padding: 0.9rem 1.25rem;
+  padding: 0.75rem 1rem;
   text-align: left;
   white-space: nowrap;
   font-size: 0.62rem;
@@ -392,7 +424,7 @@
 }
 
 .busway-table td {
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(243, 244, 246, 0.95);
   vertical-align: middle;
 }

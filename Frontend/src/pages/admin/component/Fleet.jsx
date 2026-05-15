@@ -435,10 +435,10 @@ export default function FleetManagement() {
       </motion.div>
 
       <motion.div {...fadeUp(0.06)} className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Total vehicules" value={loading ? "-" : buses.length} helper="Bus visibles" icon={Bus} />
-        <MetricCard label="En service" value={loading ? "-" : activeBuses} helper="Disponibles maintenant" icon={CircleGauge} />
-        <MetricCard label="Assignes" value={loading ? "-" : assignedBuses} helper="Avec ligne" icon={Route} />
-        <MetricCard label="Conducteurs" value={loading ? "-" : withDriver} helper="Bus avec conducteur" icon={UserRound} />
+        <MetricCard label="Total vehicules" value={loading ? "-" : buses.length} helper="Bus visibles" icon={Bus} color="blue" />
+        <MetricCard label="En service" value={loading ? "-" : activeBuses} helper="Disponibles maintenant" icon={CircleGauge} color="emerald" />
+        <MetricCard label="Assignes" value={loading ? "-" : assignedBuses} helper="Avec ligne" icon={Route} color="purple" />
+        <MetricCard label="Conducteurs" value={loading ? "-" : withDriver} helper="Bus avec conducteur" icon={UserRound} color="amber" />
       </motion.div>
 
       <motion.div {...fadeUp(0.12)} className="busway-panel overflow-hidden">
@@ -469,14 +469,14 @@ export default function FleetManagement() {
           <table className="busway-table min-w-[980px]">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Immatriculation</th>
-                <th>Modele</th>
-                <th>Capacite</th>
-                <th>Ligne</th>
-                <th>Conducteur</th>
-                <th>Statut</th>
-                <th className="w-28">Actions</th>
+                <th className="w-[5%]">ID</th>
+                <th className="w-[15%]">Immatriculation</th>
+                <th className="w-[15%]">Modele</th>
+                <th className="w-[10%]">Capacite</th>
+                <th className="w-[30%]">Ligne</th>
+                <th className="w-[10%]">Conducteur</th>
+                <th className="w-[10%]">Statut</th>
+                <th className="w-[5%]">Actions</th>
               </tr>
             </thead>
             <tbody>

@@ -711,10 +711,10 @@ export default function LinesManagement() {
       </motion.div>
 
       <motion.div {...fadeUp(0.06)} className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Total lignes" value={loading ? "-" : lines.length} helper="Lignes disponibles" icon={Route} />
-        <MetricCard label="Total arrets" value={loading ? "-" : totalStops} helper="Points de montee" icon={MapPin} />
-        <MetricCard label="Bus actifs" value={loading ? "-" : totalBuses} helper="Sur les lignes" icon={Bus} />
-        <MetricCard label="Moy. arrets" value={loading ? "-" : averageStops} helper="Par ligne" icon={ChevronRight} />
+        <MetricCard label="Total lignes" value={loading ? "-" : lines.length} helper="Lignes disponibles" icon={Route} color="purple" />
+        <MetricCard label="Total arrets" value={loading ? "-" : totalStops} helper="Points de montee" icon={MapPin} color="pink" />
+        <MetricCard label="Bus actifs" value={loading ? "-" : totalBuses} helper="Sur les lignes" icon={Bus} color="emerald" />
+        <MetricCard label="Moy. arrets" value={loading ? "-" : averageStops} helper="Par ligne" icon={ChevronRight} color="blue" />
       </motion.div>
 
       <motion.div {...fadeUp(0.1)} className="flex w-full overflow-x-auto">
@@ -777,13 +777,13 @@ export default function LinesManagement() {
             <table className="busway-table min-w-[960px]">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Ligne</th>
-                  <th>Depart</th>
-                  <th>Arrivee</th>
-                  <th>Arrets</th>
-                  <th>Bus</th>
-                  <th className="w-28">Actions</th>
+                  <th className="w-[5%]">ID</th>
+                  <th className="w-[25%]">Ligne</th>
+                  <th className="w-[20%]">Depart</th>
+                  <th className="w-[20%]">Arrivee</th>
+                  <th className="w-[10%]">Arrets</th>
+                  <th className="w-[10%]">Bus</th>
+                  <th className="w-[10%]">Actions</th>
                 </tr>
               </thead>
               <tbody>
