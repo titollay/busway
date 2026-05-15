@@ -36,9 +36,8 @@ try {
     $stmt = $pdo->query("SELECT COUNT(*) FROM conducteur");
     $activeDrivers = (int) $stmt->fetchColumn();
 
-    // 6. Total Passengers (Example: count of 'usager')
-    // Fallback if role='usager' doesn't exist, we just query total users who are not drivers/admins.
-    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'usager'");
+    // 6. Total Passengers
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'user'");
     $todayPassengers = (int) $stmt->fetchColumn();
 
     // Return Data

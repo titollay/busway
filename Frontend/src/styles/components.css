@@ -288,3 +288,147 @@
   color: #3b82f6;
   background: rgba(59, 130, 246, 0.05);
 }
+
+/* --- ADMIN SURFACES --- */
+.busway-glow-card,
+.busway-panel {
+  position: relative;
+  border-radius: 14px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+}
+
+.busway-glow-card {
+  overflow: hidden;
+  z-index: 1;
+  border: none;
+  background: transparent;
+  box-shadow: 18px 18px 42px rgba(148, 163, 184, 0.22), -18px -18px 42px rgba(255, 255, 255, 0.9);
+}
+
+.busway-card-bg {
+  position: absolute;
+  inset: 5px;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: 10px;
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+}
+
+.busway-card-blob {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: #3b82f6;
+  opacity: 0.9;
+  filter: blur(12px);
+  animation: busway-blob-bounce 5s infinite ease;
+}
+
+.dark .busway-panel {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(17, 24, 39, 0.78);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+}
+
+.dark .busway-glow-card {
+  box-shadow: 18px 18px 42px rgba(0, 0, 0, 0.24), -18px -18px 42px rgba(255, 255, 255, 0.02);
+}
+
+.dark .busway-card-bg {
+  outline-color: rgba(255, 255, 255, 0.08);
+  background: rgba(17, 24, 39, 0.92);
+}
+
+.dark .busway-card-blob {
+  background: #2563eb;
+  opacity: 0.75;
+}
+
+@keyframes busway-blob-bounce {
+  0% {
+    transform: translate(-100%, -100%) translate3d(0, 0, 0);
+  }
+
+  25% {
+    transform: translate(-100%, -100%) translate3d(100%, 0, 0);
+  }
+
+  50% {
+    transform: translate(-100%, -100%) translate3d(100%, 100%, 0);
+  }
+
+  75% {
+    transform: translate(-100%, -100%) translate3d(0, 100%, 0);
+  }
+
+  100% {
+    transform: translate(-100%, -100%) translate3d(0, 0, 0);
+  }
+}
+
+.busway-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.busway-table th {
+  padding: 0.9rem 1.25rem;
+  text-align: left;
+  white-space: nowrap;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  background: rgba(249, 250, 251, 0.72);
+  border-bottom: 1px solid rgba(243, 244, 246, 0.95);
+}
+
+.busway-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(243, 244, 246, 0.95);
+  vertical-align: middle;
+}
+
+.dark .busway-table th {
+  color: rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.12);
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .busway-table td {
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.busway-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(248, 250, 252, 0.9);
+  padding: 0.28rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.dark .busway-pill {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .busway-card-blob {
+    animation: none;
+  }
+}

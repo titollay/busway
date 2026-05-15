@@ -7,11 +7,19 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once '../../config/db.php';
 
 try {
+    $pdo = getDB();
+
     $stmt = $pdo->query("
-        SELECT id_user, nom, prenom, email, created_at, role
+        SELECT
+            id_user,
+            nom,
+            '' AS prenom,
+            email,
+            date_ajout AS created_at,
+            role
         FROM users
-        WHERE role = 'usager'
-        ORDER BY created_at DESC
+        WHERE role = 'user'
+        ORDER BY date_ajout DESC
     ");
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode(["status" => "success", "data" => $users]);
