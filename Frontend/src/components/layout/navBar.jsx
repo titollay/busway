@@ -86,7 +86,7 @@ export default function NavBar({ className = "" }) {
     <header
       className={`font-['DM_Sans',sans-serif] fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-black/60 backdrop-blur-xl border-b border-white/5 shadow-2xl"
+          ? "bg-[#020A12] backdrop-blur-xl border-b border-white/5 shadow-2xl"
           : "bg-transparent"
       } ${className}`}
     >

@@ -31,15 +31,23 @@ if (empty($stops)) {
 
 // Routes Definition
 $paths = [
-    1 => array_values(array_filter($stops, fn($s) => in_array($s['id_arret'], [1,2,3,4,5,6]))),
-    2 => array_values(array_filter($stops, fn($s) => in_array($s['id_arret'], [7,8,9,10,11,12]))),
-    4 => array_values(array_filter($stops, fn($s) => in_array($s['id_arret'], [13,1,14,15,16,17])))
+    1 => array_values(array_filter($stops, fn($s) => in_array($s['id_arret'], [1,2,15,18,12,17,16,13,14]))),
+    2 => array_values(array_filter($stops, fn($s) => in_array($s['id_arret'], [7,8,9,10,11]))),
+    3 => array_values(array_filter($stops, fn($s) => in_array($s['id_arret'], [4,3,9,8,7]))),
+    4 => array_values(array_filter($stops, fn($s) => in_array($s['id_arret'], [13,1,14,11,10])))
 ];
 
-$positions_indices = [1 => 0, 2 => 0, 4 => 0];
-$micro_indices = [1 => 0, 2 => 0, 4 => 0];
-$delays = [1 => 0, 2 => 0, 4 => 0];
-$directions = [1 => 1, 2 => 1, 4 => 1];
+$positions_indices = [];
+$micro_indices = [];
+$delays = [];
+$directions = [];
+
+foreach ($paths as $busId => $bus_stops) {
+    $positions_indices[$busId] = 0;
+    $micro_indices[$busId] = 0;
+    $delays[$busId] = 0;
+    $directions[$busId] = 1;
+}
 
 $steps_per_leg = 40; 
 
@@ -52,13 +60,15 @@ while (true) {
         if ($delays[$busId] > 0) {
             $delays[$busId]--;
             $pos_idx = $positions_indices[$busId];
-            $curr = $bus_stops[$pos_idx];
-            $batch[] = [
-                'id_bus' => $busId,
-                'latitude' => $curr['latitude'],
-                'longitude' => $curr['longitude'],
-                'nom_ligne' => "En Arrêt"
-            ];
+            $curr = $bus_stops[$pos_idx] ?? null;
+            if ($curr) {
+                $batch[] = [
+                    'id_bus' => $busId,
+                    'latitude' => $curr['latitude'],
+                    'longitude' => $curr['longitude'],
+                    'nom_ligne' => "En Arrêt"
+                ];
+            }
             continue;
         }
 
@@ -83,7 +93,7 @@ while (true) {
             'id_bus' => $busId,
             'latitude' => $currentLat,
             'longitude' => $currentLng,
-            'nom_ligne' => "Ligne " . ($busId==1?1:($busId==2?2:4))
+            'nom_ligne' => "Ligne " . $busId
         ];
 
         $micro_indices[$busId]++;

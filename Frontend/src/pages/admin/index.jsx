@@ -44,7 +44,7 @@ export default function IndexAdmin() {
       <div className="flex flex-col flex-1 bg-[#F4F6FA] dark:bg-[#0a0a0a] min-w-0 transition-colors duration-300">
         <TopBar collapsed={collapsed} setCollapsed={setCollapsed} user={user} />
 
-        {/* هنا نضيف scroll */}
+      {/* هنا نضيف scroll */}
         <div className="flex-1 overflow-y-auto ">
           <Outlet />
         </div>
