@@ -5,194 +5,130 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 
-import bus  from "../../assets/bus.jpg";
+// ─── Assets ───────────────────────────────────────────────────────────────────
+import bus1 from "../../assets/bus.jpg";
 import bus2 from "../../assets/bus2.jpg";
-import wall from "../../assets/wall.webp";
+import bus3 from "../../assets/wall.webp";
+import bus4 from "../../assets/bus2.jpg"; 
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+const IMG_STYLE = { filter: "brightness(0.6) contrast(1.05)" };
 
-const images = [bus, bus2, wall, bus2];
+const ColImg = ({ src, alt }) => (
+  <div className="h-48 w-36 overflow-hidden rounded-lg shadow-lg">
+    <img
+      src={src}
+      className="h-full w-full object-cover"
+      style={IMG_STYLE}
+      alt={alt}
+    />
+  </div>
+);
 
 const texts = [
-  {
-    num: "01",
-    title: "Vision & Innovation",
-    body: "BusWay est une plateforme dédiée au suivi des bus en temps réel à Oujda — conçue pour aider chaque usager à mieux organiser ses déplacements au quotidien.",
-  },
-  {
-    num: "02",
-    title: "Précision GPS",
-    body: "Grâce à une carte interactive et à l'intégration GPS, vous connaissez à tout moment la position exacte de votre bus et son temps d'arrivée estimé.",
-  },
-  {
-    num: "03",
-    title: "Impact Urbain",
-    body: "Un réseau de 50 lignes, 120 bus connectés et 10 000 voyageurs heureux chaque jour. BusWay, c'est la mobilité urbaine simple et prévisible.",
-  },
+  "Une plateforme avancée propulsée par l'IA combinant technologie de pointe et mobilité intelligente.",
+  "Chaque trajet est optimisé pour la ponctualité, la sécurité et le confort des citoyens d'Oujda.",
+  "Suivi en temps réel, expérience fluide et un réseau de transport en lequel vous pouvez avoir confiance.",
 ];
 
-// ─── Shared Components ────────────────────────────────────────────────────────
-
-function RoundImg({ src, alt, rotate }) {
-  return (
-    <motion.div 
-      style={{ rotate }}
-      className="h-64 w-44 overflow-hidden rounded-[4rem] shadow-[-20px_20px_60px_rgba(0,0,0,0.4)] border border-white/5 group"
-    >
-      <img
-        src={src}
-        alt={alt}
-        className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
-        style={{ filter: "brightness(0.7) contrast(1.1)" }}
-      />
-    </motion.div>
-  );
-}
-
-// ─── Main Component ───────────────────────────────────────────────────────────
-
-export default function About() {
-  const ref = useRef(null);
-
+function About() {
+  const ref = useRef();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start center", "end start"],
   });
 
-  /* Parallax offsets */
-  const leftY   = useTransform(scrollYProgress, [0, 1], ["-100px", "100px"]);
-  const rightY  = useTransform(scrollYProgress, [0, 1], ["100px", "-100px"]);
-  
-  /* Rotation for a more "organic/rounded" feel */
-  const rotateL = useTransform(scrollYProgress, [0, 1], [-5, 5]);
-  const rotateR = useTransform(scrollYProgress, [0, 1], [5, -5]);
-
-  /* Text block animations */
   const makeAnim = (range) => ({
-    y:       useTransform(scrollYProgress, range, ["350px", "0px"]),
+    y: useTransform(scrollYProgress, range, ["400px", "0px"]),
     opacity: useTransform(scrollYProgress, range, [0, 1]),
-    scale:   useTransform(scrollYProgress, range, [0.92, 1]),
   });
 
   const anims = [
-    makeAnim([0,    0.33]),
-    makeAnim([0.3,  0.63]),
-    makeAnim([0.58, 0.82]),
+    makeAnim([0, 0.3]),
+    makeAnim([0.3, 0.6]),
+    makeAnim([0.6, 0.7]),
   ];
+
+  const leftY = useTransform(scrollYProgress, [0, 1], ["-150px", "150px"]);
+  const centerY = useTransform(scrollYProgress, [0, 1], ["150px", "-150px"]);
 
   return (
     <section
-      id="about"
-      ref={ref}
-      className="bg-[#070320] text-white relative"
+        id="about"
+        ref={ref}
+      className="darkSection bg-[#070320] max-md:overflow-hidden text-white overflow-hidden"
       style={{ minHeight: "100vh" }}
     >
-      {/* Background soft circles */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-[20%] right-[-10%] w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[100px]" />
-      </div>
-
-      <div
-        className="min-h-[140vh] max-md:min-h-screen relative flex items-start
-                   justify-between max-md:flex-col
-                   max-w-7xl mx-auto px-6 lg:px-16"
-      >
-
-        {/* ── LEFT: Sticky Panel with "Rounded" Imagery ── */}
-        <div
-          className="sticky top-0 h-screen w-full lg:w-1/2 flex flex-col justify-center
-                     max-md:relative max-md:h-auto max-md:py-16"
-        >
-          {/* Section label */}
-          <div className="flex items-center gap-3 mb-6">
-            <span className="w-12 h-px bg-blue-500/50" />
-            <p className="text-[0.7rem] uppercase tracking-[0.4em] text-blue-400 font-semibold">
-              Discovery
-            </p>
-          </div>
-
-          {/* Heading */}
-          <h2
-            className="text-5xl lg:text-7xl font-bold text-white leading-[0.95] tracking-tight mb-12"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+      <div className="min-h-[120vh] max-md:min-h-screen relative flex items-center justify-around max-md:justify-center max-md:flex-col max-w-7xl mx-auto">
+        
+        {/* Left: sticky images (Exact original classes for desktop) */}
+        <div className="sticky top-[10%] h-screen w-1/2 max-md:w-full max-md:h-auto max-md:top-auto max-md:pt-10 max-md:mb-10">
+          <p
+            id="about-us"
+            className="text-xs uppercase tracking-[0.3em] text-[#3498db] mb-4"
           >
-            L'Essence<br />
-            <span className="text-blue-500 italic">BusWay</span>
+            <span className="divider-line" />
+            Qui Sommes Nous
+          </p>
+          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold max-md:mb-10 text-white">
+             L'Essence <span className="text-blue-500 italic">BusWay</span>
           </h2>
 
-          {/* Overlapping Rounded Image Columns */}
-          <div className="relative w-full mt-24 lg:mt-32 pb-20">
-            <div className="flex items-start justify-start gap-8 lg:gap-12">
-              <motion.div style={{ y: leftY }} className="flex flex-col gap-8">
-                <RoundImg src={images[0]} alt="Bus" rotate={rotateL} />
-                <RoundImg src={images[1]} alt="Comfort" rotate={rotateL} />
-              </motion.div>
-              <motion.div style={{ y: rightY }} className="flex flex-col gap-8 mt-24 lg:mt-32">
-                <RoundImg src={images[2]} alt="Oujda" rotate={rotateR} />
-                <RoundImg src={images[3]} alt="Route" rotate={rotateR} />
-              </motion.div>
+          <div className="m-4 max-md:m-0 max-md:h-[50vh] max-md:relative">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 flex items-center justify-start max-md:justify-center"
+            >
+              <div className="flex gap-8 ml-10 max-md:gap-4 max-md:ml-0">
+                <motion.div style={{ y: leftY }} className="grid gap-4 max-md:transform-none!">
+                  <ColImg src={bus3} alt="BusWay visual 1" />
+                  <ColImg src={bus4} alt="BusWay visual 2" />
+                </motion.div>
+                <motion.div style={{ y: centerY }} className="grid gap-4 max-md:transform-none!">
+                  <ColImg src={bus1} alt="BusWay visual 3" />
+                  <ColImg src={bus2} alt="BusWay visual 4" />
+                </motion.div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ── RIGHT: Scrolling Text Blocks ── */}
-        <div
-          className="w-full lg:w-1/2 flex flex-col gap-[30vh] lg:pl-16 py-[25vh] max-md:hidden"
-        >
-          {texts.map((t, i) => (
+        {/* Right: animated text blocks (Exact original classes for desktop, hidden on mobile) */}
+        <div className="flex flex-col gap-[10vh] max-md:gap-[4vh] relative z-10 max-md:hidden">
+          {texts.map((text, i) => (
             <motion.div
               key={i}
               style={anims[i]}
-              className="group flex flex-col gap-6"
+              className="min-h-[200px] h-auto w-full max-w-[600px] text-center flex items-center justify-center"
             >
-              {/* Number Index */}
-              <div className="flex items-end gap-4">
-                  <span className="text-6xl font-bold opacity-10 font-serif leading-none">
-                      {t.num}
-                  </span>
-                  <div className="h-px bg-blue-500/30 w-full mb-2" />
-              </div>
-
-              {/* Title */}
-              <h4 className="text-blue-400 text-sm uppercase tracking-widest font-bold">
-                {t.title}
-              </h4>
-
-              {/* Body */}
-              <p
-                className="text-2xl lg:text-3xl font-light text-gray-100 leading-snug lg:max-w-md"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                {t.body}
-              </p>
+              <p className="text-2xl font-light text-gray-200">{text}</p>
             </motion.div>
           ))}
         </div>
 
-        {/* ── MOBILE: Content Slider ── */}
-        <div className="lg:hidden w-full pb-20">
-          <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-md">
+        {/* Right: Swiper Text (ONLY shown on Mobile) */}
+        <div className="md:hidden block w-full px-6 relative z-10 pb-12 mt-4">
+          <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 shadow-sm border border-white/10">
             <Swiper
               modules={[Pagination, Autoplay]}
-              pagination={{ clickable: true }}
-              autoplay={{ delay: 4000 }}
-              spaceBetween={30}
+              pagination={{ clickable: true, dynamicBullets: true }}
+              autoplay={{ delay: 3500, disableOnInteraction: false }}
+              spaceBetween={20}
               slidesPerView={1}
+              className="w-full pb-10"
             >
-              {texts.map((t, i) => (
-                <SwiperSlide key={i} className="flex flex-col gap-4 pb-12">
-                  <h4 className="text-blue-500 text-xs uppercase tracking-widest font-bold">{t.title}</h4>
-                  <p className="text-xl text-gray-200 font-light leading-relaxed font-serif">
-                    {t.body}
+              {texts.map((text, i) => (
+                <SwiperSlide key={i} className="flex flex-col items-center justify-center min-h-[160px]">
+                  <p className="text-lg font-medium text-center text-gray-200 px-2">
+                    {text}
                   </p>
                 </SwiperSlide>
               ))}
             </Swiper>
           </div>
         </div>
-
       </div>
     </section>
   );
 }
+
+export default About;

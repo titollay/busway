@@ -40,6 +40,31 @@ try {
     $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'user'");
     $todayPassengers = (int) $stmt->fetchColumn();
 
+    // 7. Monthly Chart Data (Last 6 months)
+    $months = [];
+    $usagersData = [];
+    $conducteursData = [];
+    
+    // Translate EN months to FR roughly if wanted, or just standard Y-m format
+    for ($i = 5; $i >= 0; $i--) {
+        // e.g., "Janv.", "Févr.", etc.
+        $m = date('n', strtotime("-$i months"));
+        $frenchMonths = ["", "Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"];
+        $monthLabel = $frenchMonths[$m];
+        $months[] = $monthLabel;
+        
+        $start = date('Y-m-01 00:00:00', strtotime("-$i months"));
+        $end = date('Y-m-t 23:59:59', strtotime("-$i months"));
+        
+        $stmtChart1 = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role IN ('user', 'usager') AND date_ajout BETWEEN ? AND ?");
+        $stmtChart1->execute([$start, $end]);
+        $usagersData[] = (int)$stmtChart1->fetchColumn();
+        
+        $stmtChart2 = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role = 'conducteur' AND date_ajout BETWEEN ? AND ?");
+        $stmtChart2->execute([$start, $end]);
+        $conducteursData[] = (int)$stmtChart2->fetchColumn();
+    }
+
     // Return Data
     echo json_encode([
         "success" => true,
@@ -51,6 +76,19 @@ try {
             "activeDrivers" => $activeDrivers,
             "todayPassengers" => $todayPassengers,
             "growth" => "+14%" // Mocked trend
+        ],
+        "chart" => [
+            "categories" => $months,
+            "series" => [
+                [
+                    "name" => "Usagers",
+                    "data" => $usagersData
+                ],
+                [
+                    "name" => "Conducteurs",
+                    "data" => $conducteursData
+                ]
+            ]
         ]
     ]);
 } catch (PDOException $e) {
