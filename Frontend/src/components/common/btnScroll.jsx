@@ -4,7 +4,7 @@ import styled from "styled-components";
 const Button = () => {
   return (
     <StyledWrapper>
-      <div className="scrolldown" style={{ "--color": "blue" }}>
+      <div className="scrolldown" style={{ "--color": "white" }}>
         <div className="chevrons">
           <div className="chevrondown" />
           <div className="chevrondown" />

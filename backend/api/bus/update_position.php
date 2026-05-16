@@ -58,7 +58,7 @@ if ($lng < -180 || $lng > 180) {
 
 // 🚌 Get Bus Info
 $stmtBus = $pdo->prepare("
-    SELECT b.id_bus, l.nom_ligne 
+    SELECT b.id_bus, b.immatriculation, l.nom_ligne 
     FROM bus b 
     LEFT JOIN ligne l ON b.id_ligne = l.id_ligne 
     WHERE b.matricule = ?
@@ -89,6 +89,7 @@ curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['fleet' => [
     [
         'id_bus' => $busInfo['id_bus'],
+        'immatriculation' => $busInfo['immatriculation'],
         'latitude' => $lat,
         'longitude' => $lng,
         'nom_ligne' => $busInfo['nom_ligne'] ?: "En Service"

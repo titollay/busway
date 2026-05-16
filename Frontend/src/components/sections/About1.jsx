@@ -6,10 +6,10 @@ import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 
 // ─── Assets ───────────────────────────────────────────────────────────────────
-import bus1 from "../../assets/bus.jpg";
-import bus2 from "../../assets/bus2.jpg";
-import bus3 from "../../assets/wall.webp";
-import bus4 from "../../assets/bus2.jpg"; 
+import bus1 from "../../assets/bus.webp";
+import bus2 from "../../assets/bg.webp";
+import bus3 from "../../assets/busRegis.webp";
+import bus4 from "../../assets/bus2.webp"; 
 
 const IMG_STYLE = { filter: "brightness(0.6) contrast(1.05)" };
 
@@ -55,7 +55,7 @@ function About() {
     <section
         id="about"
         ref={ref}
-      className="darkSection bg-[#070320] max-md:overflow-hidden text-white overflow-hidden"
+      className="darkSection bg-[#070315] max-md:overflow-hidden text-white overflow-hidden"
       style={{ minHeight: "100vh" }}
     >
       <div className="min-h-[120vh] max-md:min-h-screen relative flex items-center justify-around max-md:justify-center max-md:flex-col max-w-7xl mx-auto">

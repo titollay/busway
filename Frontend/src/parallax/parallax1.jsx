@@ -41,7 +41,7 @@ export default function Parallax1({ sectionName }) {
   );
 
   return (
-    <div className="min-h-screen bg-[#070320] flex items-center justify-center relative py-12 pb-20">
+    <div className="min-h-screen bg-[#070315] flex items-center justify-center relative py-12 pb-20">
       <motion.div
         style={{ opacity: modelOpacity }}
         className="pointer-events-none"

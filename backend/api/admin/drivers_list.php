@@ -9,7 +9,7 @@ require_once '../../config/db.php';
 try {
     $pdo = getDB();
     $stmt = $pdo->query("
-        SELECT c.matricule, c.gps_active, u.nom, u.email, u.telephone, u.date_ajout
+        SELECT u.id_user, c.matricule, c.gps_active, u.nom, u.email, u.telephone, u.date_ajout, u.image
         FROM conducteur c
         JOIN users u ON c.id_user = u.id_user
         ORDER BY u.date_ajout DESC

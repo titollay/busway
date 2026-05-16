@@ -3,12 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Navigation, Clock, MapPin, Activity, Bus, Compass, Layers, Sun, Moon, Eye, EyeOff, Search, LogOut, Settings } from "lucide-react";
+import { Navigation, Clock, MapPin, Activity, Bus, Compass, Layers, Sun, Moon, Eye, EyeOff, Search, LogOut, Settings, Bell } from "lucide-react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 
 import logo from "../assets/logo.png";
+import Loader from "../components/Loader";
 
 // --- HELPERS ---
 const getRotation = (start, end) => {
@@ -99,8 +100,11 @@ export default function MapUsager() {
   const [showLines, setShowLines] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarTab, setSidebarTab] = useState("routes");
+  const [notifications, setNotifications] = useState([]);
+  const [newAlert, setNewAlert] = useState(null);
   const [clickedStop, setClickedStop] = useState(null);
   const [networkPaths, setNetworkPaths] = useState([]);
+  const [loading, setLoading] = useState(true);
   const mapRef = useRef(null);
 
   const hour = new Date().getHours();
@@ -108,14 +112,37 @@ export default function MapUsager() {
 
   useEffect(() => {
     setMapStyle(isNightTime ? 'dark' : 'light');
+    
+    // Fetch existing notifications from DB
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch('http://localhost/bus/busway/backend/api/bus/get_notifications.php');
+        const data = await response.json();
+        if (data.status === 'success') {
+          setNotifications(data.notifications);
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+    fetchNotifications();
+
     const socket = io("http://localhost:4000");
     socket.on("fleet_update", (data) => Array.isArray(data) && setBuses(prev => {
       const next = {...prev}; data.forEach(b => next[b.id_bus] = b); return next;
     }));
+
+    socket.on("bus_alert", (alert) => {
+      setNotifications(prev => [alert, ...prev]);
+      setNewAlert(alert);
+      setTimeout(() => setNewAlert(null), 8000); // Popup vanishes after 8s
+    });
+
     axios.get('/api/bus/get_network.php').then(res => {
         if(res.data.arrets) setStops(res.data.arrets);
         if(res.data.paths) setNetworkPaths(res.data.paths);
-    });
+        setLoading(false);
+    }).catch(() => setLoading(false));
     const watchId = navigator.geolocation.watchPosition(p => setUserPos([p.coords.latitude, p.coords.longitude]));
     return () => { socket.disconnect(); navigator.geolocation.clearWatch(watchId); };
   }, [isNightTime]);
@@ -159,6 +186,7 @@ export default function MapUsager() {
 
   return (
     <div className={`h-screen w-full relative overflow-hidden ${mapStyle}`}>
+      {loading && <Loader />}
       {/* Top Left Menu Button - Hamburger */}
       <div className="absolute top-6 left-6 z-[2000] pointer-events-auto">
          <button 
@@ -275,6 +303,18 @@ export default function MapUsager() {
                              <Search className="w-5 h-5 mb-1" /> Routes
                          </button>
                          <button 
+                             onClick={() => setSidebarTab("notifications")}
+                             className={`flex-1 py-4 flex flex-col items-center justify-center font-bold text-[10px] uppercase transition-colors ${sidebarTab === 'notifications' ? 'border-b-2 border-blue-500 text-blue-400 bg-white/5' : 'opacity-60 hover:opacity-100 hover:bg-white/5'}`}
+                         >
+                             <div className="relative">
+                                <Bell className="w-5 h-5 mb-1" />
+                                {notifications.length > 0 && (
+                                   <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#1a2b3c] animate-pulse"></span>
+                                )}
+                             </div>
+                             Alertes
+                         </button>
+                         <button 
                              onClick={() => setSidebarTab("settings")}
                              className={`flex-1 py-4 flex flex-col items-center justify-center font-bold text-[10px] uppercase transition-colors ${sidebarTab === 'settings' ? 'border-b-2 border-blue-500 text-blue-400 bg-white/5' : 'opacity-60 hover:opacity-100 hover:bg-white/5'}`}
                          >
@@ -292,7 +332,8 @@ export default function MapUsager() {
                         {/* Background Glow */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-                        {sidebarTab === 'routes' ? (
+                        {/* --- ROUTES TAB --- */}
+                        {sidebarTab === 'routes' && (
                            <div className="w-full relative z-10 mt-2">
                               <div className="flex items-center gap-6 mb-8">
                                  <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.15)] shrink-0">
@@ -311,25 +352,54 @@ export default function MapUsager() {
                                        initial={{ opacity: 0, x: -20 }}
                                        animate={{ opacity: 1, x: 0 }}
                                        transition={{ delay: 0.1 * (idx + 1) }}
-                                       onClick={() => setSelectedBusId(bus.id_bus)}
-                                       className={`bg-[#0B1120] border rounded-3xl p-5 flex items-center justify-between group transition-all cursor-pointer ${selectedBusId === bus.id_bus ? 'border-blue-500 scale-[1.02] bg-blue-500/5 shadow-[0_0_30px_rgba(59,130,246,0.15)]' : 'border-white/5 hover:border-white/10 hover:bg-white/[0.04]'}`}
                                     >
-                                       <div className="flex items-center gap-5">
-                                          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-lg shrink-0 transition-transform ${selectedBusId === bus.id_bus ? 'bg-white text-blue-600' : 'bg-[#216cf3] text-white group-hover:scale-105'}`}>
-                                             #{bus.id_bus}
-                                          </div>
-                                          <div className="text-left">
-                                             <h4 className="text-sm font-black text-white tracking-wide uppercase">{bus.nom_ligne}</h4>
-                                             <div className="flex items-center gap-2 mt-1">
-                                                <div className={`w-1.5 h-1.5 rounded-full ${bus.statusColor.replace('text', 'bg')} shadow-[0_0_8px_currentColor] animate-pulse`}></div>
-                                                <span className={`text-[10px] font-black uppercase tracking-widest ${bus.statusColor}`}>{bus.statusLabel}</span>
-                                             </div>
-                                          </div>
-                                       </div>
-                                       <div className="text-right">
-                                          <div className={`text-xl font-black leading-none ${selectedBusId === bus.id_bus ? 'text-white' : 'text-[#42a5f5]'}`}>{bus.eta}</div>
-                                          <div className="text-[9px] font-black text-gray-500 uppercase tracking-widest mt-1">Estimé</div>
-                                       </div>
+                                        <div 
+                                           key={bus.id_bus} 
+                                           onClick={() => setSelectedBusId(bus.id_bus)}
+                                           className={`group relative flex items-center p-4 rounded-[24px] border transition-all duration-500 cursor-pointer mb-3
+                                              ${selectedBusId === bus.id_bus 
+                                                 ? 'bg-blue-600/20 border-blue-500/50 shadow-[0_8px_32px_rgba(37,99,235,0.15)] backdrop-blur-xl' 
+                                                 : 'bg-white/[0.03] border-white/10 hover:bg-white/[0.08] hover:border-white/20'}`}
+                                        >
+                                           <div className="flex items-center gap-4 flex-1 min-w-0">
+                                              {/* Bus Identifier Square */}
+                                              <div className={`w-14 h-14 rounded-2xl flex flex-col items-center justify-center shadow-2xl shrink-0 transition-all duration-500 group-hover:scale-105
+                                                 ${selectedBusId === bus.id_bus ? 'bg-white text-blue-600' : 'bg-[#216cf3] text-white opacity-90'}`}>
+                                                 <span className="text-[10px] uppercase font-black tracking-tighter opacity-70 leading-none mb-0.5">Bus</span>
+                                                 <span className="text-xl font-black leading-none">{bus.immatriculation || bus.id_bus}</span>
+                                              </div>
+
+                                              {/* Content */}
+                                              <div className="flex flex-col gap-1.5 min-w-0">
+                                                 <h4 className="text-[13px] font-black text-white leading-snug tracking-wide uppercase">
+                                                    {bus.nom_ligne}
+                                                 </h4>
+                                                 
+                                                 <div className="flex items-center gap-3">
+                                                    <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/5 border border-white/5`}>
+                                                       <div className={`w-1.5 h-1.5 rounded-full ${bus.statusColor.replace('text', 'bg')} shadow-[0_0_8px_currentColor] animate-pulse`}></div>
+                                                       <span className={`text-[9px] font-black uppercase tracking-widest ${bus.statusColor}`}>{bus.statusLabel}</span>
+                                                    </div>
+                                                    
+                                                    <div className="flex items-center gap-1 opacity-60">
+                                                       <svg className="w-2.5 h-2.5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                       </svg>
+                                                       <span className="text-[9px] text-white font-bold opacity-80 uppercase tracking-tighter">Sidi Yahya</span>
+                                                    </div>
+                                                 </div>
+                                              </div>
+                                           </div>
+
+                                           {/* ETA Section */}
+                                           <div className="flex flex-col items-end ml-4 shrink-0 pr-1">
+                                              <div className="flex flex-col items-center">
+                                                 <span className="text-2xl font-black text-blue-400 leading-none">{bus.eta.split(' ')[0]}</span>
+                                                 <span className="text-[9px] font-black text-blue-400/60 uppercase tracking-widest">min</span>
+                                              </div>
+                                              <span className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em] mt-1">Estimé</span>
+                                           </div>
+                                        </div>
                                     </motion.div>
                                  )) : (
                                     <div className="text-center text-gray-500 mt-10">
@@ -339,28 +409,88 @@ export default function MapUsager() {
                                  )}
                               </div>
                            </div>
-                        ) : (
+                        )}
+
+                        {/* --- NOTIFICATIONS TAB --- */}
+                        {sidebarTab === 'notifications' && (
+                           <div className="w-full relative z-10 mt-2 flex flex-col gap-4">
+                              <h3 className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-2 px-2">Alertes de Trafic</h3>
+                              {notifications.length === 0 ? (
+                                 <div className="bg-white/5 rounded-3xl p-10 text-center border border-white/10 backdrop-blur-md">
+                                    <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10">
+                                       <Bell className="w-8 h-8 text-white/20" />
+                                    </div>
+                                    <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Pas d'alertes</p>
+                                 </div>
+                              ) : (
+                                 <div className="flex flex-col gap-3">
+                                    {notifications.map((notif, index) => (
+                                       <motion.div 
+                                          key={index}
+                                          initial={{ opacity: 0, y: 10 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          className="bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-3xl p-5 backdrop-blur-md shadow-xl"
+                                       >
+                                          <div className="flex justify-between items-start mb-3">
+                                             <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
+                                                notif.type === 'Accident' ? 'bg-red-500/20 text-red-400' :
+                                                notif.type === 'Panne' ? 'bg-orange-500/20 text-orange-400' :
+                                                'bg-blue-500/20 text-blue-400'
+                                             }`}>
+                                                {notif.type || 'Alerte'}
+                                             </span>
+                                             <span className="text-[10px] text-gray-500 font-black font-mono">{notif.time}</span>
+                                          </div>
+                                          <p className="text-white text-sm font-bold leading-relaxed">{notif.message}</p>
+                                          
+                                          <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                                             <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-blue-500/30 flex items-center justify-center border border-blue-500/30 shadow-lg shrink-0">
+                                                   <span className="text-base font-black text-white drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]">
+                                                      {notif.bus_number || notif.id_bus || '#'}
+                                                   </span>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                   <span className="text-[9px] font-black text-blue-400/70 uppercase tracking-widest">IMMATRICULATION</span>
+                                                   <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">BUS EN TRANSIT</span>
+                                                </div>
+                                             </div>
+
+                                             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                                <span className="text-[10px] text-emerald-400 font-black tracking-tighter">15-20 MIN</span>
+                                             </div>
+                                          </div>
+                                       </motion.div>
+                                    ))}
+                                 </div>
+                              )}
+                           </div>
+                        )}
+
+                        {/* --- SETTINGS TAB --- */}
+                        {sidebarTab === 'settings' && (
                            <div className="w-full relative z-10 mt-4 flex flex-col gap-8 text-white font-sans px-2">
                               <div>
                                  <h4 className="text-blue-400 font-black uppercase tracking-[0.2em] text-[10px] mb-4">Apparence de la Carte</h4>
                                  
-                                 <div className="flex items-center justify-between py-3 border-b border-white/5">
-                                    <span className="text-sm text-gray-300 font-bold">Mode Sombre</span>
+                                 <div className="flex items-center justify-between py-4 border-b border-white/5">
+                                    <span className="text-sm text-gray-300 font-bold uppercase tracking-wider">Mode Sombre</span>
                                     <button 
                                        onClick={() => setMapStyle(mapStyle === 'dark' ? 'light' : 'dark')}
-                                       className={`w-11 h-6 rounded-full relative transition-colors ${mapStyle === 'dark' ? 'bg-[#3b82f6]' : 'bg-gray-600'}`}
+                                       className={`w-12 h-6 rounded-full relative transition-all duration-300 ${mapStyle === 'dark' ? 'bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'bg-gray-600'}`}
                                     >
-                                       <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${mapStyle === 'dark' ? 'translate-x-5' : ''}`}></div>
+                                       <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${mapStyle === 'dark' ? 'translate-x-6' : ''}`}></div>
                                     </button>
                                  </div>
                         
-                                 <div className="flex items-center justify-between py-3 border-b border-white/5">
-                                   <span className="text-sm text-gray-300 font-bold">Mode Satellite</span>
+                                 <div className="flex items-center justify-between py-4 border-b border-white/5">
+                                   <span className="text-sm text-gray-300 font-bold uppercase tracking-wider">Mode Satellite</span>
                                    <button 
                                       onClick={() => setMapStyle(mapStyle === 'sat' ? 'dark' : 'sat')}
-                                      className={`w-11 h-6 rounded-full relative transition-colors ${mapStyle === 'sat' ? 'bg-[#3b82f6]' : 'bg-gray-600'}`}
+                                      className={`w-12 h-6 rounded-full relative transition-all duration-300 ${mapStyle === 'sat' ? 'bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'bg-gray-600'}`}
                                    >
-                                      <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${mapStyle === 'sat' ? 'translate-x-5' : ''}`}></div>
+                                      <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${mapStyle === 'sat' ? 'translate-x-6' : ''}`}></div>
                                    </button>
                                  </div>
                               </div>
@@ -368,30 +498,30 @@ export default function MapUsager() {
                               <div>
                                  <h4 className="text-blue-400 font-black uppercase tracking-[0.2em] text-[10px] mb-4">Données Géographiques</h4>
                                  
-                                 <div className="flex items-center justify-between py-3 border-b border-white/5">
-                                    <span className="text-sm text-gray-300 font-bold">Ma Position Externe</span>
-                                    <button className="w-11 h-6 rounded-full relative transition-colors bg-[#3b82f6]">
-                                       <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform translate-x-5 shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
+                                 <div className="flex items-center justify-between py-4 border-b border-white/5">
+                                    <span className="text-sm text-gray-300 font-bold uppercase tracking-wider">Ma Position Externe</span>
+                                    <button className="w-12 h-6 rounded-full relative transition-all bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                       <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform translate-x-6"></div>
                                     </button>
                                  </div>
                         
-                                 <div className="flex items-center justify-between py-3 border-b border-white/5">
-                                    <span className="text-sm text-gray-300 font-bold">Afficher les lignes (Routes)</span>
+                                 <div className="flex items-center justify-between py-4 border-b border-white/5">
+                                    <span className="text-sm text-gray-300 font-bold uppercase tracking-wider">Lignes (Routes)</span>
                                     <button 
                                        onClick={() => setShowLines(!showLines)}
-                                       className={`w-11 h-6 rounded-full relative transition-colors ${showLines ? 'bg-[#3b82f6]' : 'bg-gray-600'}`}
+                                       className={`w-12 h-6 rounded-full relative transition-all duration-300 ${showLines ? 'bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'bg-gray-600'}`}
                                     >
-                                       <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${showLines ? 'translate-x-5 shadow-[0_0_10px_rgba(255,255,255,0.5)]' : ''}`}></div>
+                                       <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${showLines ? 'translate-x-6' : ''}`}></div>
                                     </button>
                                  </div>
-
-                                 <div className="flex items-center justify-between py-3 border-b border-white/5">
-                                    <span className="text-sm text-gray-300 font-bold">Afficher les arrêts (Filtre)</span>
+ 
+                                 <div className="flex items-center justify-between py-4 border-b border-white/5">
+                                    <span className="text-sm text-gray-300 font-bold uppercase tracking-wider">Arrêts (Filtre)</span>
                                     <button 
                                        onClick={() => setShowStops(!showStops)}
-                                       className={`w-11 h-6 rounded-full relative transition-colors ${showStops ? 'bg-[#3b82f6]' : 'bg-gray-600'}`}
+                                       className={`w-12 h-6 rounded-full relative transition-all duration-300 ${showStops ? 'bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'bg-gray-600'}`}
                                     >
-                                       <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${showStops ? 'translate-x-5 shadow-[0_0_10px_rgba(255,255,255,0.5)]' : ''}`}></div>
+                                       <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${showStops ? 'translate-x-6' : ''}`}></div>
                                     </button>
                                  </div>
                               </div>

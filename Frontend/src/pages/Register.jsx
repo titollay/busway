@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import img3 from "../assets/busregis.jpg";
-import logo from "../assets/logo.png";
+import img3 from "../assets/busRegis.webp";
+import logo from "../assets/logo-bl.png";
 
 const container = {
   hidden: { opacity: 0 },
@@ -212,7 +212,7 @@ export default function Register() {
             {/* Logo */}
             <motion.div variants={item} className="mb-8 flex justify-center">
               <a href="/" className="flex items-center gap-3">
-                <img src={logo} className="h-10 object-contain" alt="logo" />
+                <img src={logo} className="h-16 object-contain" alt="logo" />
                 <span className="text-2xl font-bold tracking-wide text-[#2563eb]">BusWay</span>
               </a>
             </motion.div>

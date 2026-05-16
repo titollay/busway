@@ -7,37 +7,38 @@ $pdo = getDB();
 
 try {
     // Get all stops
-    $stops = $pdo->query("SELECT * FROM arret")->fetchAll();
+    $stops = $pdo->query("SELECT * FROM arret")->fetchAll(PDO::FETCH_ASSOC);
     
     // Get all lines to show on map or filter
-    $lines = $pdo->query("SELECT * FROM ligne")->fetchAll();
+    $lines = $pdo->query("SELECT * FROM ligne")->fetchAll(PDO::FETCH_ASSOC);
 
-    // Reconstruct paths from sequence of stop IDs for realistic map drawing
-    $path_definitions = [
-        1 => [1,2,15,18,12,17,16,13,14],
-        2 => [7,8,9,10,11],
-        3 => [4,3,9,8,7],
-        4 => [13,1,14,11,10]
-    ];
+    // Reconstruct paths dynamically from ligne_arret matching real seeded IDs
+    $stmt = $pdo->query("
+        SELECT la.id_ligne, a.latitude, a.longitude
+        FROM ligne_arret la
+        JOIN arret a ON la.id_arret = a.id_arret
+        ORDER BY la.id_ligne, la.ordre ASC
+    ");
+    $ligne_arrets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $paths = [];
-    foreach ($path_definitions as $line_id => $stop_ids) {
-        $paths[$line_id] = [];
-        foreach ($stop_ids as $id) {
-            foreach ($stops as $s) {
-                if ($s['id_arret'] == $id) {
-                    $paths[$line_id][] = [floatval($s['latitude']), floatval($s['longitude'])];
-                    break;
-                }
-            }
+    foreach ($ligne_arrets as $row) {
+        $line_id = $row['id_ligne'];
+        if (!isset($paths[$line_id])) {
+            $paths[$line_id] = [];
         }
+        $paths[$line_id][] = [floatval($row['latitude']), floatval($row['longitude'])];
     }
 
+    // Colors matching all 7 Oujda lines
     $colors = [
         1 => '#8b5cf6', // Purple
         2 => '#f97316', // Orange
         3 => '#3b82f6', // Blue
-        4 => '#ef4444'  // Red
+        4 => '#ef4444', // Red
+        5 => '#10b981', // Green
+        6 => '#eab308', // Yellow
+        7 => '#ec4899'  // Pink
     ];
 
     $formattedPaths = [];

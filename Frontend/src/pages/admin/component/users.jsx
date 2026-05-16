@@ -3,17 +3,18 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Tooltip,
-  XAxis,
-  YAxis,
+  Area as ReArea,
+  AreaChart as ReAreaChart,
+  CartesianGrid as ReCartesianGrid,
+  Tooltip as ReTooltip,
+  XAxis as ReXAxis,
+  YAxis as ReYAxis,
   useChartHeight,
   useYAxisScale,
 } from "recharts";
-import { RefreshCw } from "lucide-react";
-import { Breadcrumb, Pagination, getPagination } from "../common/adminUi";
+import Chart from "react-apexcharts";
+import { RefreshCw, Users as UsersIcon, Clock, TrendingUp, CheckCircle, AlertCircle } from "lucide-react";
+import { ActionButton, Breadcrumb, MetricCard, Pagination, getPagination } from "../common/adminUi";
 
 const PAGE_SIZE = 6;
 
@@ -74,11 +75,24 @@ function PassengerTooltip({ active, payload, label }) {
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDark, setIsDark] = useState(false);
   const [page, setPage] = useState(1);
+  const [timeRange, setTimeRange] = useState("total");
+  const [fleetCount, setFleetCount] = useState(0);
+  const [linesCount, setLinesCount] = useState(0);
+  const [driversCount, setDriversCount] = useState(0);
 
   useEffect(() => {
-    axios
-      .get("/api/admin/users_list.php")
+    const checkDark = () => setIsDark(document.documentElement.classList.contains("dark"));
+    checkDark();
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    axios.get("/api/admin/users_list.php")
       .then((res) => {
         if (res.data.status === "success") {
           setUsers(res.data.data || []);
@@ -130,29 +144,65 @@ export default function Users() {
     const now = new Date();
     const startOfYear = new Date(now.getFullYear(), 0, 1);
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    
     const startOfWeek = new Date(now);
     const day = startOfWeek.getDay() || 7;
-    if (day !== 1) {
-      startOfWeek.setDate(startOfWeek.getDate() - (day - 1));
-    }
+    if (day !== 1) startOfWeek.setDate(startOfWeek.getDate() - (day - 1));
     startOfWeek.setHours(0, 0, 0, 0);
-    
-    let weekCount = 0;
-    let monthCount = 0;
-    let yearCount = 0;
+    const dayStart = new Date(now);
+    dayStart.setHours(0, 0, 0, 0);
+
+    let weekCount = 0, monthCount = 0, yearCount = 0, dayCount = 0;
+    let verifiedCount = 0;
     
     users.forEach((u) => {
       const d = parseDate(u.created_at);
       if (!d) return;
-      
+      if (d >= dayStart) dayCount++;
       if (d >= startOfWeek) weekCount++;
       if (d >= startOfMonth) monthCount++;
       if (d >= startOfYear) yearCount++;
+
+      // Simulating "Verified" if tel exists or email is present
+      if (u.telephone) verifiedCount++;
     });
+
+    // Calculate growth rate compared to previous month
+    const currentMonth = chartData[6]?.registrations || 0;
+    const lastMonth = chartData[5]?.registrations || 0;
+    const growth = lastMonth === 0 ? 100 : Math.round(((currentMonth - lastMonth) / lastMonth) * 100);
     
-    return { week: weekCount, month: monthCount, year: yearCount };
-  }, [users]);
+    return { 
+      today: dayCount, 
+      month: monthCount, 
+      year: yearCount, 
+      verified: verifiedCount,
+      pending: users.length - verifiedCount,
+      growth: growth > 0 ? `+${growth}%` : `${growth}%`
+    };
+  }, [users, chartData]);
+
+  const filteredInscriptions = useMemo(() => {
+    const now = new Date();
+    if (timeRange === "total") return users.length;
+
+    let startLimit = new Date();
+    if (timeRange === "day") {
+      startLimit.setHours(0, 0, 0, 0);
+    } else if (timeRange === "week") {
+      const day = now.getDay() || 7;
+      startLimit.setDate(now.getDate() - (day - 1));
+      startLimit.setHours(0, 0, 0, 0);
+    } else if (timeRange === "month") {
+      startLimit = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else if (timeRange === "year") {
+      startLimit = new Date(now.getFullYear(), 0, 1);
+    }
+
+    return users.filter((u) => {
+      const d = parseDate(u.created_at);
+      return d && d >= startLimit;
+    }).length;
+  }, [users, timeRange]);
 
   const pagination = getPagination(users, page, PAGE_SIZE);
 
@@ -166,20 +216,115 @@ export default function Users() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6 w-full">
-      <Breadcrumb crumbs={[{ label: "Dashboard", href: "/index" }, { label: "Passengers" }]} />
+    <div className="px-4 md:px-8 w-full relative pb-12 min-h-screen bg-[#f4f6fa] dark:bg-[#0a0a0a] font-['DM_Sans',sans-serif]">
+      <div className="w-full space-y-8">
+                <div
+                    className="max-lg:flex-col max-lg:justify-center max-lg:items-center"
+                    style={{
+                        borderBottom: isDark ? "1px solid rgba(255,255,255,0.07)" : `1px solid rgba(0,0,0,0.05)`,
+                        padding: "20px 0",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        gap: 16,
+                        marginBottom: "24px"
+                    }}
+                >
+                    <div className="max-lg:w-full max-lg:flex max-lg:justify-center max-lg:mb-2" style={{ flex: 1 }}>
+                        <h1
+                            style={{
+                                margin: 0,
+                                fontSize: "1.2rem",
+                                fontWeight: 900,
+                                color: isDark ? "#f1f5f9" : "#1e293b",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 10,
+                            }}
+                        >
+                        <div
+                            style={{
+                                width: 42,
+                                height: 42,
+                                background: "rgba(37, 99, 235, 0.1)",
+                                border: "1px solid rgba(37, 99, 235, 0.2)",
+                                borderRadius: 12,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                position: "relative"
+                            }}
+                        >
+                            <i className="fa-solid fa-users text-blue-600 text-xl" />
+                        </div>
+                        <span style={{ letterSpacing: "-0.02em" }}>Passagers</span>
+                        </h1>
+                    </div>
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-black text-gray-900 dark:text-white mb-2">Passenger App Users</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">Monitor app usage and passenger accounts.</p>
-        </div>
-      </div>
+                    <div
+                        className="flex max-lg:static max-lg:my-2 absolute left-1/2 -translate-x-1/2 max-lg:left-auto max-lg:translate-x-0"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            padding: "6px 14px",
+                            background: isDark ? "#111827" : "#ffffff",
+                            borderRadius: 20,
+                            border: isDark ? "1px solid #374151" : `1px solid #e5e7eb`,
+                            boxShadow: "0 2px 10px rgba(0,0,0,0.05)"
+                        }}
+                    >
+                        <span style={{ fontSize: "0.7rem", color: isDark ? "#94a3b8" : "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Admin</span>
+                        <i className="fa-solid fa-chevron-right" style={{ fontSize: 8, color: isDark ? "#4b5563" : "#94a3b8" }} />
+                        <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 800, textTransform: "uppercase" }}>Passagers</span>
+                    </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatsCard title="Cette Semaine" count={stats.week} desc="Nouvelles inscriptions au cours des 7 derniers jours." />
-        <StatsCard title="Ce Mois" count={stats.month} desc="Nouvelles inscriptions pour le mois en cours." />
-        <StatsCard title="Cette Année" count={stats.year} desc="Nouvelles inscriptions pour l'année en cours." />
+                    <div className="max-lg:w-full max-lg:justify-center flex items-center gap-4 flex-1 justify-end">
+                        {/* No action button for users currently */}
+                    </div>
+                </div>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard 
+          label="Passagers" 
+          value={loading ? "..." : filteredInscriptions} 
+          helper={`${timeRange === 'total' ? 'Total historique' : 'Nouveaux inscrits'}`}
+          icon={UsersIcon} 
+          color="blue" 
+          filter={{
+            value: timeRange,
+            options: [
+              { label: "Aujourd'hui", value: "day" },
+              { label: "Semaine", value: "week" },
+              { label: "Mois", value: "month" },
+              { label: "Année", value: "year" },
+              { label: "Total", value: "total" },
+            ]
+          }}
+          onFilterChange={setTimeRange}
+        />
+        <MetricCard 
+          label="Taux de Croissance" 
+          value={loading ? "..." : stats.growth} 
+          helper="Vs mois précédent" 
+          icon={TrendingUp} 
+          color="emerald" 
+        />
+        <MetricCard 
+          label="Profils Vérifiés" 
+          value={loading ? "..." : stats.verified} 
+          helper="Comptes avec tel." 
+          icon={CheckCircle} 
+          color="purple" 
+        />
+        <MetricCard 
+          label="Comptes en Attente" 
+          value={loading ? "..." : stats.pending} 
+          helper="Action requise" 
+          icon={AlertCircle} 
+          color="amber" 
+        />
       </div>
 
       <div className="w-full min-h-[300px]">
@@ -194,21 +339,87 @@ export default function Users() {
             </div>
           </div>
 
-          <div className="w-full h-[360px]">
-            <AreaChart
-              responsive
-              data={chartData}
-              margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
-              style={{ width: "100%", height: "100%" }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis width="auto" domain={[-chartLimit, chartLimit]} />
-              <Tooltip content={<PassengerTooltip />} />
-              <Gradient />
-              <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
-            </AreaChart>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Registration Chart */}
+        <motion.div 
+          variants={fadeUp}
+          className="lg:col-span-8 p-8 rounded-[32px] bg-white dark:bg-[#111827] border border-gray-100 dark:border-white/5 shadow-sm"
+        >
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
+                  <i className="fa-solid fa-chart-line"></i>
+                </div>
+                Croissance des Passagers
+              </h3>
+              <p className="text-xs font-bold text-gray-400 mt-1">Historique des 7 derniers mois</p>
+            </div>
           </div>
+          
+          <Chart 
+            options={{
+              chart: { type: 'area', toolbar: { show: false }, fontFamily: 'inherit' },
+              colors: ['#2563eb'],
+              fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.45, opacityTo: 0.05 } },
+              dataLabels: { enabled: false },
+              stroke: { curve: 'smooth', width: 3 },
+              xaxis: { 
+                categories: chartData.map(d => d.name),
+                labels: { style: { colors: isDark ? '#94a3b8' : '#64748b' } },
+                axisBorder: { show: false }, axisTicks: { show: false }
+              },
+              yaxis: { labels: { style: { colors: isDark ? '#94a3b8' : '#64748b' } } },
+              grid: { borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', strokeDashArray: 4 },
+              tooltip: { theme: isDark ? 'dark' : 'light' }
+            }}
+            series={[{ name: 'Inscriptions', data: chartData.map(d => d.registrations) }]}
+            type="area"
+            height={320}
+          />
+        </motion.div>
+
+        {/* Verification Status Gauge */}
+        <motion.div 
+          variants={fadeUp}
+          className="lg:col-span-4 p-8 rounded-[32px] bg-white dark:bg-[#111827] border border-gray-100 dark:border-white/5 shadow-sm flex flex-col items-center justify-center text-center"
+        >
+          <h3 className="text-xl font-black text-gray-900 dark:text-white mb-6 uppercase tracking-tighter">Qualité des Données</h3>
+          
+          <Chart 
+            options={{
+              chart: { type: 'radialBar' },
+              plotOptions: {
+                radialBar: {
+                  startAngle: -135,
+                  endAngle: 135,
+                  hollow: { size: '70%', margin: 15 },
+                  track: { background: isDark ? '#1f2937' : '#f1f5f9', strokeWidth: '100%' },
+                  dataLabels: {
+                    name: { show: true, color: isDark ? '#94a3b8' : '#64748b', fontSize: '12px', fontWeight: 800, offsetY: 0, textAnchor: 'middle' },
+                    value: { show: true, color: isDark ? '#f8fafc' : '#1e293b', fontSize: '30px', fontWeight: 900, offsetY: 15, formatter: (val) => `${val}%` }
+                  }
+                }
+              },
+              colors: [stats.verified > stats.pending ? '#10b981' : '#3b82f6'],
+              labels: ['Profils Vérifiés'],
+              stroke: { lineCap: 'round' }
+            }}
+            series={[users.length ? Math.round((stats.verified / users.length) * 100) : 0]}
+            type="radialBar"
+            height={300}
+          />
+          
+          <div className="mt-4 space-y-2">
+            <p className="text-sm font-bold text-gray-500 dark:text-gray-400">
+              <span className="text-blue-600 dark:text-blue-400">{stats.verified}</span> passagers ont validé leur téléphone
+            </p>
+            <div className="inline-block px-4 py-2 rounded-full bg-blue-500/5 text-blue-600 text-[10px] font-black uppercase tracking-widest">
+              Engagement Optimal
+            </div>
+          </div>
+        </motion.div>
+      </div>
         </motion.div>
       </div>
 
@@ -281,124 +492,9 @@ export default function Users() {
           />
         )}
       </motion.div>
+      </div>
     </div>
   );
 }
 
-const StyledWrapper = styled.div`
-  .card-title {
-    color: #111827;
-    font-size: 1.5em;
-    line-height: normal;
-    font-weight: 900;
-    margin-bottom: 0.5em;
-    transition: all 0.4s ease-out;
-  }
 
-  .small-desc {
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.5em;
-    color: #6b7280;
-    transition: all 0.4s ease-out;
-  }
-
-  .go-corner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    width: 2.5em;
-    height: 2.5em;
-    overflow: hidden;
-    top: 0;
-    right: 0;
-    background: #3b82f6;
-    border-radius: 0 14px 0 32px;
-  }
-
-  .go-arrow {
-    margin-top: -6px;
-    margin-right: -6px;
-    color: white;
-    font-weight: bold;
-  }
-
-  .card {
-    display: block;
-    position: relative;
-    width: 100%;
-    min-height: 140px;
-    background-color: #ffffff;
-    border-radius: 14px;
-    border: 1px solid rgba(226, 232, 240, 0.95);
-    padding: 2em 1.5em;
-    text-decoration: none;
-    z-index: 0;
-    overflow: hidden;
-    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .card:before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: -16px;
-    right: -16px;
-    background: #2563eb;
-    height: 32px;
-    width: 32px;
-    border-radius: 32px;
-    transform: scale(1);
-    transform-origin: 50% 50%;
-    transition: transform 0.4s ease-out;
-  }
-
-  .card:hover:before {
-    transform: scale(35);
-  }
-
-  .card:hover .small-desc {
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .card:hover .card-title {
-    color: #ffffff;
-  }
-
-  .dark & .card, :global(.dark) & .card {
-    background-color: rgba(17, 24, 39, 0.78);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
-  }
-  
-  .dark & .card-title, :global(.dark) & .card-title {
-    color: #ffffff;
-  }
-
-  .dark & .small-desc, :global(.dark) & .small-desc {
-    color: #9ca3af;
-  }
-
-  .dark & .card:before, :global(.dark) & .card:before {
-    background: #3b82f6;
-  }
-`;
-
-const StatsCard = ({ title, count, desc }) => {
-  return (
-    <StyledWrapper>
-      <div className="card shadow-sm border border-gray-100 dark:border-white/5">
-        <p className="card-title">{count} Users</p>
-        <p className="small-desc" style={{ fontWeight: 'bold', color: '#3b82f6', marginBottom: '0.5rem', fontSize: '1.1em' }}>{title}</p>
-        <p className="small-desc">
-          {desc}
-        </p>
-        <div className="go-corner">
-          <div className="go-arrow">→</div>
-        </div>
-      </div>
-    </StyledWrapper>
-  );
-};

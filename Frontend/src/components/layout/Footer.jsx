@@ -82,7 +82,7 @@ export default function Footer() {
     <>
       <style>{`
         .footer-root {
-          background: #070320;
+          background: #060414;
           color: rgba(255,255,255,0.6);
           font-family: 'DM Sans', 'Inter', sans-serif;
           position: relative;

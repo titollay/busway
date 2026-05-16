@@ -12,7 +12,7 @@ function Services() {
   ];
 
   return (
-    <div id="services" className="min-h-screen bg-[#070320] py-16 px-6 text-white">
+    <div id="services" className="min-h-screen bg-[#070315] py-16 px-6 text-white">
       <div className="max-w-6xl mx-auto px-6 mb-14">
         <p className="text-xs uppercase tracking-[0.3em] text-blue-400 mb-4 flex items-center gap-2">
           <span className="w-8 h-px bg-blue-400 inline-block" />
