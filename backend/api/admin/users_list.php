@@ -15,6 +15,7 @@ try {
             nom,
             '' AS prenom,
             email,
+            telephone,
             date_ajout AS created_at,
             role
         FROM users

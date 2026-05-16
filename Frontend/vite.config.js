@@ -18,7 +18,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost/busway/backend',
+        target: 'http://localhost/bus/busway/backend',
         changeOrigin: true,
         // ✅ pas de rewrite nécessaire
       },

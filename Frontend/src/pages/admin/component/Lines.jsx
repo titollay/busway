@@ -537,7 +537,17 @@ export default function LinesManagement() {
   const [editStop, setEditStop] = useState(null);
   const [newStop, setNewStop] = useState(false);
   const [delStop, setDelStop] = useState(null);
+  const [page, setPage] = useState(1);
   const [toast, setToast] = useState(null);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const checkDark = () => setIsDark(document.documentElement.classList.contains("dark"));
+    checkDark();
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
@@ -613,14 +623,15 @@ export default function LinesManagement() {
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 p-4 sm:p-6 font-['DM_Sans',sans-serif]">
+    <div className="px-4 md:px-8 w-full relative pb-12 min-h-screen bg-[#f4f6fa] dark:bg-[#0a0a0a] font-['DM_Sans',sans-serif]">
+      <div className="w-full space-y-8">
       <AnimatePresence>
         {toast && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className={`fixed bottom-7 right-7 z-[200] rounded-xl border px-5 py-3 text-sm shadow-2xl ${
+            className={`fixed bottom-7 right-7 z-200 rounded-xl border px-5 py-3 text-sm shadow-2xl ${
               toast.type === "success"
                 ? "border-gray-200 bg-white text-gray-700 dark:border-white/10 dark:bg-gray-900 dark:text-white/70"
                 : "border-red-200 bg-red-50 text-red-500 dark:border-red-500/20 dark:bg-red-500/10"
@@ -688,27 +699,78 @@ export default function LinesManagement() {
         )}
       </AnimatePresence>
 
-      <Breadcrumb crumbs={[{ label: "Dashboard", href: "/index" }, { label: "Lines & Stops" }]} />
+                <div
+                    className="max-lg:flex-col max-lg:justify-center max-lg:items-center"
+                    style={{
+                        borderBottom: isDark ? "1px solid rgba(255,255,255,0.07)" : `1px solid rgba(0,0,0,0.05)`,
+                        padding: "20px 0",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        gap: 16,
+                        marginBottom: "24px"
+                    }}
+                >
+                    <div className="max-lg:w-full max-lg:flex max-lg:justify-center max-lg:mb-2" style={{ flex: 1 }}>
+                        <h1
+                            style={{
+                                margin: 0,
+                                fontSize: "1.2rem",
+                                fontWeight: 900,
+                                color: isDark ? "#f1f5f9" : "#1e293b",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 10,
+                            }}
+                        >
+                        <div
+                            style={{
+                                width: 42,
+                                height: 42,
+                                background: "rgba(37, 99, 235, 0.1)",
+                                border: "1px solid rgba(37, 99, 235, 0.2)",
+                                borderRadius: 12,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                position: "relative"
+                            }}
+                        >
+                            <i className="fa-solid fa-route text-blue-600 text-xl" />
+                        </div>
+                        <span style={{ letterSpacing: "-0.02em" }}>Lignes & Arrêts</span>
+                        </h1>
+                    </div>
 
-      <motion.div {...fadeUp(0)} className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="mb-1 text-[0.6rem] uppercase tracking-[0.25em] text-gray-400 dark:text-white/30">
-            Administration
-          </p>
-          <h1 className="text-2xl font-black text-gray-900 dark:text-white sm:text-3xl">Lines & Stops</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Gestion des lignes de bus et de leurs arrets.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => (activeTab === "lines" ? setNewLine(true) : setNewStop(true))}
-          className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-xs font-black uppercase tracking-wide text-white shadow-[0_12px_30px_rgba(37,99,235,0.18)] sm:w-auto"
-        >
-          <Plus size={16} />
-          {activeTab === "lines" ? "Ajouter une ligne" : "Ajouter un arret"}
-        </button>
-      </motion.div>
+                    <div
+                        className="flex max-lg:static max-lg:my-2 absolute left-1/2 -translate-x-1/2 max-lg:left-auto max-lg:translate-x-0"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            padding: "6px 14px",
+                            background: isDark ? "#111827" : "#ffffff",
+                            borderRadius: 20,
+                            border: isDark ? "1px solid #374151" : `1px solid #e5e7eb`,
+                            boxShadow: "0 2px 10px rgba(0,0,0,0.05)"
+                        }}
+                    >
+                        <span style={{ fontSize: "0.7rem", color: isDark ? "#94a3b8" : "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Admin</span>
+                        <i className="fa-solid fa-chevron-right" style={{ fontSize: 8, color: isDark ? "#4b5563" : "#94a3b8" }} />
+                        <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 800, textTransform: "uppercase" }}>Réseau</span>
+                    </div>
+
+                    <div className="max-lg:w-full max-lg:justify-center flex items-center gap-4 flex-1 justify-end">
+                        <button
+                          onClick={() => (activeTab === "lines" ? setNewLine(true) : setNewStop(true))}
+                          className="text-xs font-black px-5 py-2.5 rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/30 uppercase tracking-wider whitespace-nowrap"
+                        >
+                          <i className="fa-solid fa-plus mr-2" />
+                          {activeTab === "lines" ? "Ajouter une ligne" : "Ajouter un arrêt"}
+                        </button>
+                    </div>
+                </div>
 
       <motion.div {...fadeUp(0.06)} className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard label="Total lignes" value={loading ? "-" : lines.length} helper="Lignes disponibles" icon={Route} color="purple" />
@@ -747,7 +809,7 @@ export default function LinesManagement() {
       </motion.div>
 
       <motion.div {...fadeUp(0.14)} className="busway-panel overflow-hidden">
-        <div className="flex flex-col gap-4 border-b border-gray-100 bg-white/70 px-4 py-4 dark:border-white/5 dark:bg-white/[0.02] lg:flex-row lg:items-center lg:justify-between lg:px-6">
+        <div className="flex flex-col gap-4 border-b border-gray-100 bg-white/70 px-4 py-4 dark:border-white/5 dark:bg-white/2 lg:flex-row lg:items-center lg:justify-between lg:px-6">
           <h3 className="text-base font-bold text-gray-900 dark:text-white">
             {activeTab === "lines" ? "Lignes de transport" : "Arrets de bus"}
           </h3>
@@ -901,6 +963,7 @@ export default function LinesManagement() {
           />
         )}
       </motion.div>
+      </div>
     </div>
   );
 }

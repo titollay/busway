@@ -1,8 +1,7 @@
 import SideBare from "./component/sideBare";
 import { useEffect, useState } from "react";
-import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import TopBar from "./component/topBar";
-import Dashboard from "./component/dashboard";
 import AdminFooter from "./component/AdminFooter";
 
 export default function IndexAdmin() {

@@ -59,6 +59,7 @@ jsonResponse([
         'nom' => $user['nom'],
         'email' => $user['email'],
         'role' => $user['role'],
-        'matricule' => $user['matricule']
+        'matricule' => $user['matricule'],
+        'image' => $user['image']
     ]
 ]);

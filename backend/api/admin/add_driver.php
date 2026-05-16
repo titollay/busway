@@ -50,15 +50,16 @@ try {
 
     // 1. Insert into users table
     $hashedPassword = password_hash($data['mot_de_passe'], PASSWORD_DEFAULT);
-    // Determine the exact role spelling. Usually 'conducteur'
     $role = 'conducteur'; 
-    $stmtUser = $pdo->prepare("INSERT INTO users (nom, email, telephone, password, role) VALUES (?, ?, ?, ?, ?)");
+    $image = !empty($data['image']) ? $data['image'] : null;
+    $stmtUser = $pdo->prepare("INSERT INTO users (nom, email, telephone, password, role, image) VALUES (?, ?, ?, ?, ?, ?)");
     $stmtUser->execute([
         $data['nom'],
         $data['email'],
         $data['telephone'],
         $hashedPassword,
-        $role
+        $role,
+        $image
     ]);
     
     $userId = $pdo->lastInsertId();
@@ -82,6 +83,7 @@ try {
             "email" => $data['email'],
             "telephone" => $data['telephone'],
             "matricule" => $data['matricule'],
+            "image" => $image,
             "gps_active" => 0,
             "date_ajout" => date('Y-m-d H:i:s')
         ]

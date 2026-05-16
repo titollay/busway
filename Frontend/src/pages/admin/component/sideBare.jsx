@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "../../../assets/logo.png";
-import { Link } from "react-router-dom";
+import logoDark from "../../../assets/logo.png";
+import logoLight from "../../../assets/logo-bl.png";
+import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
   { href: "/index", icon: "fa-solid fa-gauge", label: "Dashboard" },
-  { href: "/index/tracking", icon: "fa-solid fa-map-location-dot", label: "Live Tracking" },
+  { href: "/index/notifications", icon: "fa-solid fa-bell", label: "Notifications" },
   { href: "/index/buses", icon: "fa-solid fa-bus", label: "Fleet Management" },
   { href: "/index/lines", icon: "fa-solid fa-route", label: "Lines & Stops" },
   { href: "/index/drivers", icon: "fa-solid fa-user-tie", label: "Drivers" },
@@ -13,8 +14,53 @@ const navItems = [
   { href: "/index/settings", icon: "fa-solid fa-gear", label: "System Settings" },
 ];
 
-export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
-  // state removed to be managed by parent IndexAdmin
+const NavItem = ({ item, collapsed, setCollapsed }) => {
+  const location = useLocation();
+  const isActive = location.pathname === item.href;
+  return (
+    <li>
+      <Link
+        to={item.href}
+        className={`sb-item ${isActive ? "active" : ""}`}
+        title={collapsed ? item.label : ""}
+        onClick={() => {
+          if (window.innerWidth < 761) setCollapsed(true);
+        }}
+      >
+        <i className={item.icon}></i>
+        <AnimatePresence>
+          {!collapsed && (
+            <motion.span
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: "auto" }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ overflow: "hidden", display: "block" }}
+            >
+              {item.label}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </Link>
+    </li>
+  );
+};
+
+export default function SideBar({ collapsed, setCollapsed }) {
+  const [isDark, setIsDark] = useState(document.documentElement.classList.contains("dark"));
+
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === "class") {
+          setIsDark(document.documentElement.classList.contains("dark"));
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>
@@ -55,9 +101,10 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
           gap: 12px;
           padding: 11px 16px;
           font-size: 0.78rem;
+          
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: rgba(0,0,0,0.4);
+          color: #555;
           text-decoration: none;
           border-left: 2px solid transparent;
           transition: all 0.25s ease;
@@ -73,8 +120,14 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
 
         .sb-item.active {
           color: #2563eb;
-          background: rgba(37,99,235,0.07);
-          border-left-color: #2563eb;
+          background: #f1f5f9;
+          border-left: 4px solid #2563eb;
+          font-weight: 800;
+        }
+
+        .dark .sb-item.active {
+          background: rgba(37,99,235,0.15) !important;
+          border-left-color: #3b82f6;
         }
 
         .sb-item i {
@@ -147,13 +200,20 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
         /* Section label */
         .sb-section {
           font-size: 0.55rem;
-          letter-spacing: 0.2em;
+          
+          letter-spacing: 0.15em;
           text-transform: uppercase;
-          color: rgba(255,255,255,0.18);
+          color: #7F7F7F;
           padding: 0 18px;
-          margin-bottom: 4px;
+          margin-top: 12px;
+          margin-bottom: 8px;
           white-space: nowrap;
           overflow: hidden;
+          opacity: 0.8;
+        }
+
+        .dark .sb-section {
+          color: rgba(255,255,255,0.5) !important;
         }
 
         /* Divider */
@@ -221,76 +281,104 @@ export default function SideBar({ activePath = "", collapsed, setCollapsed }) {
 
         {/* ── Logo ── */}
         <div className="flex items-center gap-3 py-4.5 px-4 border-b border-black/5 dark:border-white/5 overflow-hidden">
-          <a href="/" className="flex items-center gap-3 no-underline">
+          <a href="/" className="flex items-center gap-2 no-underline">
             <img
-              src={logo}
-              className="h-8 object-contain shrink-0"
+              src={isDark ? logoDark : logoLight}
+              className="h-8 object-contain scale-120 shrink-0"
               alt="BusWay Logo"
             />
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
               {!collapsed && (
                 <motion.span
+                  key={isDark ? "dark" : "light"}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
-                  className="text-lg font-bold tracking-tight text-blue-600 dark:text-blue-400 whitespace-nowrap"
+                  className={`text-lg font-bold tracking-tight whitespace-nowrap ${isDark ? 'text-white' : 'text-blue-600'}`}
                 >
-                  BusWay
+                  {isDark ? "BusWay" : "BusWay"}
                 </motion.span>
               )}
             </AnimatePresence>
           </a>
         </div>
 
-        {/* ── Nav ── */}
-        <nav className="flex-1 pt-4 overflow-y-auto overflow-x-hidden">
-          <AnimatePresence>
-            {!collapsed && (
-              <motion.p
-                className="sb-section mb-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                Main Menu
-              </motion.p>
-            )}
-          </AnimatePresence>
+        <nav className="flex-1 pt-4 overflow-y-auto overflow-x-hidden space-y-4">
+          {/* ── Main Menu Section ── */}
+          <section>
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.p
+                  className="sb-section mb-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  Main Menu
+                </motion.p>
+              )}
+            </AnimatePresence>
+              {navItems.slice(0, 2).map((item) => (
+                <NavItem key={item.href} item={item} collapsed={collapsed} setCollapsed={setCollapsed} />
+              ))}
+          </section>
 
-          <ul className="flex flex-col">
-            {navItems.map((item) => {
-              const isActive = activePath === item.href;
-              return (
-                <li key={item.href}>
-                  <Link
-                    to={item.href}
-                    className={`sb-item ${isActive ? "active" : ""}`}
-                    title={collapsed ? item.label : ""}
-                    onClick={() => {
-                      // Close sidebar on mobile after clicking a link
-                      if (window.innerWidth < 761) setCollapsed(true);
-                    }}
-                  >
-                    <i className={item.icon}></i>
-                    <AnimatePresence>
-                      {!collapsed && (
-                        <motion.span
-                          initial={{ opacity: 0, width: 0 }}
-                          animate={{ opacity: 1, width: "auto" }}
-                          exit={{ opacity: 0, width: 0 }}
-                          transition={{ duration: 0.2 }}
-                          style={{ overflow: "hidden", display: "block" }}
-                        >
-                          {item.label}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          {/* ── Network Section ── */}
+          <section>
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.p
+                  className="sb-section mb-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  Network Management
+                </motion.p>
+              )}
+            </AnimatePresence>
+              {navItems.slice(2, 4).map((item) => (
+                <NavItem key={item.href} item={item} collapsed={collapsed} setCollapsed={setCollapsed} />
+              ))}
+          </section>
+
+          {/* ── Personnel Section ── */}
+          <section>
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.p
+                  className="sb-section mb-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  Personnel
+                </motion.p>
+              )}
+            </AnimatePresence>
+              {navItems.slice(4, 6).map((item) => (
+                <NavItem key={item.href} item={item} collapsed={collapsed} setCollapsed={setCollapsed} />
+              ))}
+          </section>
+
+          {/* ── Settings Section ── */}
+          <section>
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.p
+                  className="sb-section mb-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  Preferences
+                </motion.p>
+              )}
+            </AnimatePresence>
+              {navItems.slice(6).map((item) => (
+                <NavItem key={item.href} item={item} collapsed={collapsed} setCollapsed={setCollapsed} />
+              ))}
+          </section>
         </nav>
 
         {/* ── Logout ── */}

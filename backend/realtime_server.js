@@ -22,6 +22,18 @@ app.post('/update-bus', (req, res) => {
   res.json({ success: true });
 });
 
+// Endpoint for PHP to send bus alerts (Sudden delays, technical issues)
+app.post('/send-alert', (req, res) => {
+  const alert = req.body;
+  if (alert && alert.message) {
+    console.log(`🚨 Broadcast Alert: Bus #${alert.id_bus} - ${alert.message}`);
+    io.emit('bus_alert', alert);
+  } else {
+    console.log('⚠️ Received malformed alert request');
+  }
+  res.json({ success: true });
+});
+
 io.on('connection', (socket) => {
   console.log('📡 Client connected to Real-time Map');
 });

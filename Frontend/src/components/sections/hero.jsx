@@ -32,7 +32,7 @@ export default function HoverMaskReveal() {
       ref={containerRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="relative w-full h-screen overflow-hidden bg-[#07041B] flex items-center justify-center cursor-none"
+      className="relative w-full h-screen overflow-hidden bg-[#070315] flex items-center justify-center cursor-none"
     >
       {/* Background Layer (Dull/Base) */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-10 select-none">

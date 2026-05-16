@@ -35,25 +35,76 @@ export function Breadcrumb({ crumbs }) {
   );
 }
 
-export function MetricCard({ label, value, helper, icon: Icon, color = "blue" }) {
+export function MetricCard({ label, value, helper, icon: Icon, color = "blue", filter, onFilterChange }) {
+  const colorMap = {
+    blue:    { accent: "#3b82f6", bg: "rgba(59,130,246,0.08)", text: "text-blue-600 dark:text-blue-400", border: "border-blue-200/50 dark:border-blue-500/20" },
+    emerald: { accent: "#10b981", bg: "rgba(16,185,129,0.08)", text: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-200/50 dark:border-emerald-500/20" },
+    purple:  { accent: "#8b5cf6", bg: "rgba(139,92,246,0.08)", text: "text-purple-600 dark:text-purple-400", border: "border-purple-200/50 dark:border-purple-500/20" },
+    amber:   { accent: "#f59e0b", bg: "rgba(245,158,11,0.08)", text: "text-amber-600 dark:text-amber-400", border: "border-amber-200/50 dark:border-amber-500/20" },
+    pink:    { accent: "#ec4899", bg: "rgba(236,72,153,0.08)", text: "text-pink-600 dark:text-pink-400", border: "border-pink-200/50 dark:border-pink-500/20" },
+    rose:    { accent: "#f43f5e", bg: "rgba(244,63,94,0.08)",  text: "text-rose-600 dark:text-rose-400", border: "border-rose-200/50 dark:border-rose-500/20" },
+  };
+  const c = colorMap[color] || colorMap.blue;
+
   return (
-    <div className="busway-glow-card min-h-[150px]">
+    <div className="busway-glow-card min-h-[160px]">
       <div className="busway-card-bg" />
       <div className={`busway-card-blob blob-${color}`} />
-      <div className="relative z-[3] flex h-full min-h-[150px] flex-col justify-between p-5">
+
+      {/* Colored accent bar at top */}
+      <div
+        className="absolute top-0 left-[3px] right-[3px] h-[3px] z-10"
+        style={{
+          borderRadius: "12px 12px 0 0",
+          background: `linear-gradient(90deg, ${c.accent}, ${c.accent}88, transparent)`,
+        }}
+      />
+
+      <div className="relative z-3 flex h-full min-h-[160px] flex-col justify-between p-5">
+        {/* Top row: label + icon */}
         <div className="flex items-start justify-between gap-3">
-          <p className="text-[0.62rem] uppercase tracking-widest text-gray-500 dark:text-white/45">
-            {label}
-          </p>
-          {Icon && (
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-white/60">
-              <Icon size={16} />
-            </span>
-          )}
+          <div className="flex-1">
+            <p className="text-[0.6rem] uppercase tracking-[0.18em] font-bold text-gray-500 dark:text-white/40">
+              {label}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {filter && (
+              <select
+                value={filter.value}
+                onChange={(e) => onFilterChange(e.target.value)}
+                className="rounded-lg border border-gray-200 bg-white/50 px-2 py-1 text-[0.65rem] font-bold text-gray-600 outline-none backdrop-blur-sm transition-all focus:border-blue-400 dark:border-white/10 dark:bg-black/20 dark:text-gray-300"
+              >
+                {filter.options.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            )}
+            {Icon && (
+              <span
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border ${c.border} ${c.text} shadow-sm`}
+                style={{ background: c.bg }}
+              >
+                <Icon size={20} strokeWidth={1.8} />
+              </span>
+            )}
+          </div>
         </div>
-        <div>
-          <p className="text-3xl font-black text-gray-900 dark:text-white">{value}</p>
-          {helper && <p className="mt-1 text-xs text-gray-400 dark:text-white/30">{helper}</p>}
+
+        {/* Value + helper */}
+        <div className="mt-3">
+          <p className="text-[2.2rem] font-black leading-none tracking-tight text-gray-900 dark:text-white">{value}</p>
+          {helper && (
+            <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-gray-400 dark:text-white/30">
+              <span
+                className="inline-block w-1.5 h-1.5 rounded-full"
+                style={{ background: c.accent }}
+              />
+              {helper}
+            </p>
+          )}
         </div>
       </div>
     </div>

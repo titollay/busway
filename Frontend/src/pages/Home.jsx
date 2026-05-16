@@ -13,7 +13,7 @@ export default function Home() {
 
       <div
         className="bg-cover bg-no-repeat relative"
-        style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.85), rgba(7,3,32,1)), url(${wallpaper})` }}
+        style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.9), rgba(7,3,21,1)), url(${wallpaper})` }}
       >
         <Hero />
       </div>

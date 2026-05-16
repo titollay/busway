@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import logoBl from "../../assets/logo-bl.png";
 
 const MotionDiv = motion.div;
 
@@ -94,13 +95,16 @@ export default function NavBar({ className = "" }) {
         {/* Logo */}
         <a href="#" className="flex items-center">
           <img
-            src={logo}
+            src={scrolled ? logoBl : logo}
             className="w-14 sm:w-16 xl:w-18 2xl:w-20 h-auto object-contain"
             alt="busway Logo"
           />
-<span className="text-lg font-bold bg-gradient-to-r from-white via-blue-200 to-blue-500 bg-clip-text text-transparent">
-  Busway
-</span>
+<h2 className="text-2xl font-bold tracking-tight transition-colors duration-300 text-white">
+              Bus
+              <span className={scrolled ? "text-[#2362C7]" : "text-white opacity-80"}>
+                way
+              </span>
+            </h2>
         </a>
 
         <nav className="hidden lg:block">
@@ -135,10 +139,10 @@ export default function NavBar({ className = "" }) {
               </a>
             ))}
             {location.pathname === "/" && (
-              <div className="relative inline-block group px-3 py-2 overflow-hidden rounded-lg border border-blue-500 bg-transparent">
-                <span className="absolute top-0 left-0 w-0 h-full bg-blue-500 transition-all duration-500 group-hover:w-full"></span>
+              <div className={`relative inline-block group px-5 py-2.5 overflow-hidden rounded-xl border transition-all duration-300 ${scrolled ? 'border-blue-500 bg-transparent' : 'border-white/20 bg-white/5 backdrop-blur-md'}`}>
+                <span className={`absolute top-0 left-0 w-0 h-full transition-all duration-500 group-hover:w-full ${scrolled ? "bg-blue-600" : "bg-white"}`}></span>
                 <a
-                  className="relative z-10 text-xs xl:text-sm shadow-2xl text-shadow-2xs 2xl:text-base sm:text-sm text-blue-500 font-semibold group-hover:text-white transition-colors"
+                  className={`relative z-10 text-xs xl:text-sm font-bold tracking-wider uppercase transition-colors duration-300 ${scrolled ? "text-blue-500 group-hover:text-white" : "text-white group-hover:text-blue-900"}`}
                   href="#"
                   onClick={handleSuiviBus}
                 >

@@ -6,9 +6,9 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import { Autoplay, EffectFade } from "swiper/modules";
 
-import hero4 from "../../assets/hero4.png";
-import hero41 from "../../assets/hero41.png";
-import hero45 from "../../assets/hero45.png";
+import hero4 from "../../assets/hero4.webp";
+import hero41 from "../../assets/hero41.webp";
+import hero45 from "../../assets/hero45.webp";
 import img1 from "../../assets/team/1.webp";
 import img12 from "../../assets/team/12.webp";
 import img13 from "../../assets/team/13.webp";
@@ -69,6 +69,8 @@ export default function Hero() {
     return () => observer.disconnect();
   }, []);
 
+  const [titleColorBlue, setTitleColorBlue] = useState(false);
+
   useEffect(() => {
     if (!startCount) return;
     const target = 120000;
@@ -86,22 +88,15 @@ export default function Hero() {
     }, stepTime);
     return () => clearInterval(interval);
   }, [startCount]);
+
   return (
     <>
-
       <section
         id="home"
         ref={sectionRef}
-        className="hero-root   flex flex-col justify-center relative font-poppins  z-0 px-8  xl:py-32   lg:py-28 lg:px-10 hero-root  sm:px-8 xl:px-14 py-10 sm:py-10   "
+        className="hero-root flex flex-col justify-center relative font-poppins z-0 px-8 xl:py-32 lg:py-28 lg:px-10 hero-root sm:px-8 xl:px-14 py-10 sm:py-10"
       >
-        {/* Decorative Background Images */}
-        <img
-          className="absolute w-1/6 z-0 opacity-30 pointer-events-none left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 "
-          // src={bg2}
-          alt=""
-        />
-
-        <div className="relative z-20 grid grid-cols-1 lg:grid-cols-2 items-center m-auto max-w-7xl px-8 xl:py-12 py-12  gap-20 ">
+        <div className="relative z-20 grid grid-cols-1 lg:grid-cols-2 items-center m-auto max-w-7xl px-8 xl:py-12 py-12 gap-20">
           {/* Left Content */}
           <motion.div
             variants={container}
@@ -112,12 +107,12 @@ export default function Hero() {
           >
             <motion.h1
               variants={item}
-              className="display text-white text-4xl sm:text-5xl xl:text-6xl font-light leading-[1.08]  text-shadow-lg  lg:text-4xl  "
+              className="display text-white text-4xl sm:text-5xl xl:text-6xl font-bold leading-[1.08] text-shadow-lg lg:text-5xl"
             >
-              <span className="text-[#3B82F6]  not-italic ">
+              <span className={`transition-colors duration-1000 ${titleColorBlue ? 'text-[#3B82F6]' : 'text-white'}`}>
                 Simplifiez vos trajets,&nbsp;
               </span>
-                suivez votre bus en temps réel.
+              <span className="opacity-90">suivez votre bus en temps réel.</span>
             </motion.h1>
 
             <motion.p
@@ -132,25 +127,35 @@ export default function Hero() {
             {/* Buttons */}
             <motion.div
               variants={item}
-              className="mt-8 mb-12 flex flex-col sm:flex-row sm:justify-center lg:justify-start  gap-4"
+              className="mt-8 mb-12 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4"
             >
-              <a
-                href="#"
-                onClick={handleTrouverBus}
-                className="text-center px-6 py-2.5  text-lg xl:text-xl lg:text-sm font-semibold text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 transition-all transform hover:scale-105"
-                id="heroBookBtn"
-              >
-                Trouver mon bus
-              </a>
+              <div className="relative group overflow-hidden rounded-xl">
+                <span className="absolute top-0 left-0 w-0 h-full bg-gray-100 transition-all duration-500 group-hover:w-full"></span>
+                <a
+                  href="#"
+                  onClick={handleTrouverBus}
+                  className={`relative z-10 flex items-center justify-center px-8 py-3.5 text-lg font-bold rounded-xl transition-all duration-700 shadow-[0_10px_20px_rgba(0,0,0,0.1)] hover:scale-105 active:scale-95 ${
+                    titleColorBlue 
+                      ? "text-white bg-[#3B82F6] hover:bg-[#2563EB] shadow-[#3B82F6]/30" 
+                      : "text-[#3B82F6] bg-white hover:shadow-xl shadow-white/20"
+                  }`}
+                  id="heroBookBtn"
+                >
+                  <span className="relative z-10">
+                    Trouver mon bus
+                  </span>
+                </a>
+              </div>
 
-              <a
-                href="#services"
-                className="text-center px-6 py-2.5 text-lg lg:text-xl font-semibold
- text-white text-shadow-xs border border-white/40 backdrop-blur-md
-  rounded-lg hover:bg-white hover:text-[#3B82F6] transition-all"
-              >
-                Réseau & Horaires →
-              </a>
+              <div className="relative group overflow-hidden rounded-xl border border-white/30 bg-transparent">
+                <span className="absolute top-0 left-0 w-0 h-full bg-white transition-all duration-500 group-hover:w-full"></span>
+                <a
+                  href="#services"
+                  className="relative z-10 flex items-center justify-center px-8 py-3.5 text-lg font-bold text-white transition-colors duration-300 group-hover:text-blue-900"
+                >
+                  Réseau & Horaires →
+                </a>
+              </div>
             </motion.div>
 
             {/* Team & Counter */}
@@ -182,22 +187,30 @@ export default function Hero() {
 
               {/* Counter 1 */}
               <div className="text-left">
-                <div className="flex items-center text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold gap-1 hero-counter-val">
+                <div className={`flex items-center text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold gap-1 hero-counter-val transition-colors duration-1000 ${
+                  titleColorBlue ? 'text-[#3B82F6]' : 'text-white'
+                }`}>
                   {count.toLocaleString()}
-                  <span className="text-blue-400 text-lg sm:text-2xl">+</span>
+                  <span className={`text-lg sm:text-2xl transition-colors duration-1000 ${
+                    titleColorBlue ? 'text-[#3B82F6]' : 'text-white'
+                  }`}>+</span>
                 </div>
-                <div className="hero-counter-label text-[10px] sm:text-[12px]">Passagers satisfaits</div>
+                <div className="hero-counter-label text-[10px] sm:text-[12px] text-gray-400 font-medium">Passagers satisfaits</div>
               </div>
 
               <div className="hero-divider hidden lg:block w-px h-8 bg-white/10" />
 
               {/* Counter 2 */}
               <div className="text-left">
-                <div className="flex items-center gap-1 text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold hero-counter-val text-white">
+                <div className={`flex items-center gap-1 text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold hero-counter-val transition-colors duration-1000 ${
+                  titleColorBlue ? 'text-[#3B82F6]' : 'text-white'
+                }`}>
                   4.9
-                  <span className="text-blue-400 text-lg sm:text-2xl">★</span>
+                  <span className={`text-lg sm:text-2xl transition-colors duration-1000 ${
+                    titleColorBlue ? 'text-[#3B82F6]' : 'text-white'
+                  }`}>★</span>
                 </div>
-                <div className="hero-counter-label text-[10px] sm:text-[12px]">Note moyenne</div>
+                <div className="hero-counter-label text-[10px] sm:text-[12px] text-gray-400 font-medium">Note moyenne</div>
               </div>
             </motion.div>
           </motion.div>
@@ -226,6 +239,7 @@ export default function Hero() {
                 loop={true}
                 allowTouchMove={false}
                 className="w-full"
+                onSlideChange={(swiper) => setTitleColorBlue(swiper.realIndex % 2 === 0)}
               >
                 {[hero4, hero41, hero45].map((imgSrc, idx) => (
                   <SwiperSlide key={idx}>

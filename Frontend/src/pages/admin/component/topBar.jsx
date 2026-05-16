@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Dropdown({ trigger, children }) {
   const [open, setOpen] = useState(false);
@@ -19,16 +20,22 @@ function Dropdown({ trigger, children }) {
   );
 }
 
-const NOTIFICATIONS = [
-  { icon: "fa-solid fa-bus-filled", text: "Bus #12: Maintenance Due", time: "2 hr" },
-  { icon: "fa-solid fa-user-check", text: "New Driver Verified", time: "3 hr" },
-  { icon: "fa-solid fa-triangle-exclamation", text: "Delay on Route B", time: "1 hr" },
-  {
-    icon: "fa-solid fa-route",
-    text: "Route A path updated",
-    time: "45 min",
-  },
-];
+// Notification type → icon mapper
+function notifIcon(type) {
+  switch (type?.toLowerCase()) {
+    case "warning": return "fa-solid fa-triangle-exclamation";
+    case "bus_approche": return "fa-solid fa-bus";
+    case "danger":  return "fa-solid fa-circle-exclamation";
+    default:        return "fa-solid fa-bell";
+  }
+}
+function timeAgo(dateStr) {
+  const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+  if (diff < 60)   return `${diff}s`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} min`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} hr`;
+  return `${Math.floor(diff / 86400)} j`;
+}
 
 const MESSAGES = [
   { name: "Emay Walter", msg: "Do you want to go see movie?" },
@@ -46,11 +53,56 @@ const LANGS = [
   { code: "ae", flag: "🇦🇪", label: "العربية", sub: "(ae)" },
 ];
 
-export default function TopBar({ user, collapsed, setCollapsed }) {
+export default function TopBar({ user: initialUser, collapsed, setCollapsed }) {
+  const [currentUser, setCurrentUser] = useState(initialUser);
   const [lang, setLang] = useState("en");
   const [fullscreen, setFullscreen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
+
+  // ── Real notifications state ──
+  const [liveNotifs, setLiveNotifs] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchLiveNotifs = useCallback(async () => {
+    try {
+      // Fetch first page with enough items to show latest 5 in dropdown
+      const res = await axios.get("/api/admin/get_notifications.php?page=1&limit=5");
+      if (res.data.success) {
+        setLiveNotifs(res.data.data.slice(0, 5));
+        // Count unread from full total — ask for a count-only request
+        const countRes = await axios.get("/api/admin/get_notifications.php?page=1&limit=100");
+        if (countRes.data.success) {
+          setUnreadCount(countRes.data.data.filter(n => Number(n.lu) === 0).length);
+        }
+      }
+    } catch (_) {}
+  }, []);
+
+  useEffect(() => {
+    fetchLiveNotifs();
+    // Poll every 30 seconds for new notifications
+    const interval = setInterval(fetchLiveNotifs, 30000);
+    return () => clearInterval(interval);
+  }, [fetchLiveNotifs]);
+
+  const markTopbarRead = async (id) => {
+    try {
+      await axios.post("/api/admin/mark_notification_read.php", { id_notification: id });
+      setLiveNotifs(prev => prev.map(n => n.id_notification === id ? { ...n, lu: 1 } : n));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (_) {}
+  };
+
+  useEffect(() => {
+    const handleSync = () => {
+      const updatedUser = JSON.parse(localStorage.getItem("user") || "null");
+      if (updatedUser) setCurrentUser(updatedUser);
+    };
+    window.addEventListener("userUpdate", handleSync);
+    return () => window.removeEventListener("userUpdate", handleSync);
+  }, []);
+
   // ✅ إصلاح: handleColor كاملة داخل الـ component
   const handleColor = () => {
     const next = !darkMode;
@@ -176,45 +228,85 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
           trigger={
             <div className={`${iconBtn} relative`}>
               <i className="fa-regular fa-bell text-sm"></i>
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-blue-500 rounded-full border border-white"></span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-0.5 bg-red-500 rounded-full border border-white dark:border-gray-900 flex items-center justify-center text-[9px] font-black text-white leading-none">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
             </div>
           }
         >
-          <div className={dropMenu} style={{ minWidth: 300 }}>
-            <div className={dropHdr}>
-              <i className="fa-regular fa-bell text-blue-400 text-sm"></i>
-              <h6
-                className={`text-sm font-medium ${
-                  darkMode ? "text-white/80" : "text-black/80"
-                }`}
-              >
-                Notifications
-              </h6>
-            </div>
-            {NOTIFICATIONS.map((n, i) => (
-              <div key={i} className={dropItem}>
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-                  <i className={`${n.icon} text-blue-400 text-xs`}></i>
-                </div>
-                <p
-                  className={`flex-1 text-xs ${
-                    darkMode ? "text-white/55" : "text-black/60"
-                  }`}
-                >
-                  {n.text}
-                </p>
-                <span
-                  className={`text-[0.6rem] shrink-0 ${
-                    darkMode ? "text-white/25" : "text-black/25"
-                  }`}
-                >
-                  {n.time}
-                </span>
+          <div className={dropMenu} style={{ minWidth: 320 }}>
+            {/* Header */}
+            <div className={`${dropHdr} justify-between`}>
+              <div className="flex items-center gap-2">
+                <i className="fa-regular fa-bell text-blue-400 text-sm"></i>
+                <h6 className={`text-sm font-bold ${darkMode ? "text-white/80" : "text-black/80"}`}>
+                  Notifications
+                </h6>
               </div>
-            ))}
-            <div className="px-4 py-3 ">
-              <button className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs uppercase tracking-widest transition-colors">
-                Check all notifications
+              {unreadCount > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-red-500 text-white text-[9px] font-black">
+                  {unreadCount} non lus
+                </span>
+              )}
+            </div>
+
+            {/* List */}
+            {liveNotifs.length === 0 ? (
+              <div className={`px-4 py-6 text-center text-xs ${darkMode ? "text-white/30" : "text-black/30"}`}>
+                <i className="fa-regular fa-bell-slash text-2xl mb-2 block opacity-30"></i>
+                Aucune notification
+              </div>
+            ) : (
+              liveNotifs.map((n) => (
+                <div
+                  key={n.id_notification}
+                  className={`${dropItem} ${Number(n.lu) === 0 ? (darkMode ? "bg-blue-500/5" : "bg-blue-50/60") : ""}`}
+                  onClick={() => Number(n.lu) === 0 && markTopbarRead(n.id_notification)}
+                >
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                    Number(n.lu) === 0 ? "bg-blue-100 dark:bg-blue-500/20" : "bg-gray-100 dark:bg-white/5"
+                  }`}>
+                    <i className={`${notifIcon(n.type)} text-xs ${
+                      Number(n.lu) === 0 ? "text-blue-500" : (darkMode ? "text-white/30" : "text-black/25")
+                    }`}></i>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-xs truncate ${
+                      Number(n.lu) === 0
+                        ? (darkMode ? "text-white/80 font-semibold" : "text-black/80 font-semibold")
+                        : (darkMode ? "text-white/45" : "text-black/50")
+                    }`}>
+                      {n.message}
+                    </p>
+                    {n.driver_name && (
+                      <p className={`text-[0.6rem] mt-0.5 font-bold uppercase tracking-tight ${
+                        darkMode ? "text-blue-400/70" : "text-blue-500/70"
+                      }`}>
+                        <i className="fa-solid fa-user-tie mr-1"></i>{n.driver_name}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <span className={`text-[0.6rem] ${darkMode ? "text-white/25" : "text-black/25"}`}>
+                      {timeAgo(n.date_heure)}
+                    </span>
+                    {Number(n.lu) === 0 && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+
+            {/* Footer */}
+            <div className="px-4 py-3">
+              <button
+                onClick={() => navigate("/index/notifications")}
+                className="w-full py-2 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white text-xs uppercase tracking-widest transition-all rounded-sm font-bold"
+              >
+                Voir toutes les notifications
               </button>
             </div>
           </div>
@@ -343,19 +435,23 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
                 darkMode ? "hover:bg-white/5" : "hover:bg-black/5"
               }`}
             >
-              <div className="w-7 h-7 bg-blue-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                {user?.first_name?.[0]?.toUpperCase() || "A"}
+              <div className="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden shadow-sm border border-black/5 dark:border-white/10">
+                {currentUser?.image ? (
+                  <img src={currentUser.image} className="w-full h-full object-cover" alt="" />
+                ) : (
+                  <span className="pointer-events-none select-none uppercase">{currentUser?.nom?.[0] || "A"}</span>
+                )}
               </div>
               <div className="hidden sm:block leading-tight text-left">
                 <p
-                  className={`text-xs font-medium ${
-                    darkMode ? "text-white/70" : "text-black/70"
+                  className={`text-xs font-black uppercase tracking-tighter ${
+                    darkMode ? "text-white/80" : "text-black/80"
                   }`}
                 >
-                  {user?.first_name} {user?.last_name}
+                  {currentUser?.nom}
                 </p>
-                <p className="text-[0.55rem] text-blue-500 uppercase tracking-wider">
-                  {user?.role || "admin"}
+                <p className="text-[0.55rem] text-blue-500 font-bold uppercase tracking-widest">
+                  {currentUser?.role || "admin"}
                 </p>
               </div>
               <i
@@ -373,18 +469,14 @@ export default function TopBar({ user, collapsed, setCollapsed }) {
               }`}
             >
               <p
-                className={`text-sm font-medium ${
-                  darkMode ? "text-white/80" : "text-black/80"
-                }`}
+                className={`text-sm font-black text-blue-500 uppercase tracking-tighter`}
               >
-                {user?.first_name} {user?.last_name}
+                {currentUser?.nom}
               </p>
               <p
-                className={`text-xs mt-0.5 ${
-                  darkMode ? "text-white/35" : "text-black/35"
-                }`}
+                className={`text-[10px] uppercase font-bold opacity-40 mt-0.5`}
               >
-                {user?.email}
+                {currentUser?.email}
               </p>
             </div>
             {[
