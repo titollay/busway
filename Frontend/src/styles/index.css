@@ -25,19 +25,11 @@ body {
   overflow-x: clip;
 }
 
-/* Custom Scrollbar - Scrollbars are inherently pseudo-elements and usually kept in CSS */
+/* Hide Custom Scrollbar entirely */
 ::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-dark);
-}
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .hero-img {
